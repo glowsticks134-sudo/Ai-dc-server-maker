@@ -1,0 +1,13 @@
+{
+  "name": "server-creator",
+  "version": "2.0.0",
+  "description": "Discord bot - génération de serveur via IA",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.25.1",
+    "dotenv": "^17.3.1"
+  }
+}
