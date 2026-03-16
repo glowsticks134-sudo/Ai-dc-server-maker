@@ -1,0 +1,33 @@
+# ── Environment — NEVER commit this ───────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Dependencies ──────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── Logs ──────────────────────────────────────────────────────
+logs/
+*.log
+
+# ── OS Files ──────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+desktop.ini
+
+# ── IDE / Editor ──────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Misc ──────────────────────────────────────────────────────
+.cache/
+tmp/
+*.zip
