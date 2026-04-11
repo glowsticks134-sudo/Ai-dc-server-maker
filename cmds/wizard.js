@@ -158,12 +158,18 @@ function addonRows(addons) {
     return [toggleRow, actionRow];
 }
 
-// ── Command ───────────────────────────────────────────────────────────────────
+// ── Exported helper so /deploy can hand off to the wizard ─────────────────────
+function getWizardStep1(key) {
+    pendingWizard.set(key, { typeKey: null, size: null, personality: null, addons: new Set() });
+    return { embeds: [stepEmbed(1, {})], components: [typeSelectRow()] };
+}
+
 module.exports = {
     data: {
         name: 'wizard',
         description: '🧙 Build a server using buttons & menus — zero typing required'
     },
+    getWizardStep1,
 
     async execute(interaction) {
 

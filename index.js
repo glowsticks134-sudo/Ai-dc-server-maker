@@ -85,6 +85,8 @@ const BUTTON_ROUTES = {
     owner_template_cancel: 'ownertemplates',
     wipe_confirm:          'wipe',
     wipe_cancel:           'wipe',
+    deploy_mode_prompt:    'deploy',
+    deploy_mode_wizard:    'deploy',
     preview_build:         'deploy',
     preview_cancel:        'deploy',
     preview_regen:         'deploy',

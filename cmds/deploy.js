@@ -27,6 +27,7 @@ const {
 const { generateServerStructure }                                       = require('../ai-logic');
 const { buildServer, addTicketSystem, addReactionRoles, addModerationChannels, addWelcomeEmbed } = require('../builder');
 const { isAuthorised }                                                  = require('../data/owners');
+const { getWizardStep1 }                                                = require('./wizard');
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -147,12 +148,32 @@ module.exports = {
 
     async execute(interaction) {
 
-        // ── Step 1: Slash command → separator picker ──────────────────────────
+        // ── Step 0: Slash command → mode picker ──────────────────────────────
         if (interaction.isChatInputCommand()) {
             if (!isAuthorised(interaction.guild.id, interaction.user.id, interaction.guild.ownerId)) {
                 return interaction.reply({ content: '❌ Only the server owner or a co-owner can use this command.', flags: [MessageFlags.Ephemeral] });
             }
 
+            const modeEmbed = new EmbedBuilder()
+                .setTitle('🌌 Void Builder — Choose Your Mode')
+                .setDescription('How would you like to build your server?')
+                .setColor(0x6B48FF)
+                .addFields(
+                    { name: '✍️  Prompt Mode', value: 'Describe your server in your own words and let the AI generate a unique layout from scratch.', inline: false },
+                    { name: '🧙  Wizard Mode', value: 'Choose your server type, size, personality and add-ons using dropdowns and buttons — **zero typing required**.', inline: false }
+                )
+                .setFooter({ text: '⚡ Void Builder • AI-Powered Discord Server Architect' });
+
+            const modeRow = new ActionRowBuilder().addComponents(
+                new ButtonBuilder().setCustomId('deploy_mode_prompt').setLabel('Prompt Mode').setStyle(ButtonStyle.Primary).setEmoji('✍️'),
+                new ButtonBuilder().setCustomId('deploy_mode_wizard').setLabel('Wizard Mode').setStyle(ButtonStyle.Secondary).setEmoji('🧙')
+            );
+
+            return interaction.reply({ embeds: [modeEmbed], components: [modeRow], flags: [MessageFlags.Ephemeral] });
+        }
+
+        // ── Mode: Prompt → separator picker ───────────────────────────────────
+        if (interaction.isButton() && interaction.customId === 'deploy_mode_prompt') {
             const selectMenu = new StringSelectMenuBuilder()
                 .setCustomId('deploy_sep_select')
                 .setPlaceholder('Choose a channel separator style…')
@@ -162,11 +183,18 @@ module.exports = {
                     default: o.key === 'dash'
                 })));
 
-            return interaction.reply({
+            return interaction.update({
+                embeds: [],
                 content: '### 🌌 Void Builder — Step 1 of 3\nChoose how channel names will look:',
-                components: [new ActionRowBuilder().addComponents(selectMenu)],
-                flags: [MessageFlags.Ephemeral]
+                components: [new ActionRowBuilder().addComponents(selectMenu)]
             });
+        }
+
+        // ── Mode: Wizard → hand off to wizard flow ────────────────────────────
+        if (interaction.isButton() && interaction.customId === 'deploy_mode_wizard') {
+            const key  = `${interaction.guild.id}-${interaction.user.id}`;
+            const step = getWizardStep1(key);
+            return interaction.update({ embeds: step.embeds, content: '', components: step.components });
         }
 
         // ── Step 2: Separator chosen → personality picker ─────────────────────
