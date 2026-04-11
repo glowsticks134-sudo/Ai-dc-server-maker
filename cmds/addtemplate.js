@@ -15,6 +15,7 @@ module.exports = {
     data: {
         name: 'addtemplate',
         description: '🔒 (Owner only) Import a Discord template link as a custom server template',
+        default_member_permissions: '0',
         options: [
             {
                 type: 3,
