@@ -71,10 +71,11 @@ const MODAL_ROUTES = {
 };
 
 const SELECT_ROUTES = {
-    deploy_sep_select:    'deploy',
-    prompt_select:        'prompt',
-    pub_template_select:  'templates',
-    owner_template_select:'ownertemplates'
+    deploy_sep_select:         'deploy',
+    deploy_personality_select: 'deploy',
+    prompt_select:             'prompt',
+    pub_template_select:       'templates',
+    owner_template_select:     'ownertemplates'
 };
 
 const BUTTON_ROUTES = {
@@ -84,6 +85,7 @@ const BUTTON_ROUTES = {
     preview_build:         'deploy',
     preview_cancel:        'deploy',
     preview_regen:         'deploy',
+    suggestion_toggle:     'deploy',
     ticket_open:           'setup',
     ticket_close:          'setup',
     rr:                    'setup'
@@ -111,7 +113,8 @@ client.on('interactionCreate', async interaction => {
         const baseModalId = interaction.customId.split(':')[0];
         cmdName = MODAL_ROUTES[interaction.customId] || MODAL_ROUTES[baseModalId];
     } else if (interaction.isStringSelectMenu()) {
-        cmdName = SELECT_ROUTES[interaction.customId];
+        const baseSelectId = interaction.customId.split(':')[0];
+        cmdName = SELECT_ROUTES[interaction.customId] || SELECT_ROUTES[baseSelectId];
     } else if (interaction.isButton()) {
         const baseId = interaction.customId.split(':')[0];
         cmdName = BUTTON_ROUTES[baseId] || BUTTON_ROUTES[interaction.customId];

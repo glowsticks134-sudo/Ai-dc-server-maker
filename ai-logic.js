@@ -36,14 +36,26 @@ async function callGroq(model, prompt) {
     return text;
 }
 
-async function generateServerStructure(userRequest, separator = '-') {
+const PERSONALITY_PROMPTS = {
+    toxic:        `PERSONALITY — TOXIC/EDGY: Use dark, aggressive, edgy naming throughout. Role names should feel intimidating (e.g. "💀 Demon Lord", "🩸 Blood Knight"). Channel names dark and edgy (e.g. "💀-death-pit", "😈-chaos-zone"). Welcome message should be sarcastic, menacing and darkly humorous. Prefer emojis: 💀 🩸 😈 🔥 ⛓️ 🖤 🗡️`,
+    chill:        `PERSONALITY — CHILL/RELAXED: Use calm, laid-back, friendly vibes everywhere. Role names warm and inviting (e.g. "🌿 The Crew", "☁️ Cloud Surfer"). Channel names cozy (e.g. "🌿-chill-zone", "☕-coffee-chat"). Welcome message warm, casual and inviting. Prefer emojis: 🌿 ☁️ 🌸 ☕ 🌊 🍃 💚 🌙`,
+    professional: `PERSONALITY — PROFESSIONAL/CORPORATE: Use formal, clean, business-appropriate naming. Role names like job titles (e.g. "💼 Executive", "📊 Analyst"). Channel names clean and minimal (e.g. "📋-announcements", "💬-general-discussion"). Welcome message formal and polished. Use minimal professional emojis: 💼 📊 📋 ✅ 🔷 📌`,
+    aesthetic:    `PERSONALITY — AESTHETIC/DREAMY: Use elegant, poetic, artistic naming everywhere. Role names dreamy (e.g. "✨ Stardust", "🌸 Cherry Blossom"). Channel names soft and pretty (e.g. "✨-dream-space", "🌸-soft-corner"). Welcome message poetic and enchanting. Prefer emojis: ✨ 🌸 🌙 💫 🦋 🌺 💜 🌟`,
+    void:         `PERSONALITY — GALAXY/VOID/COSMIC: Use cosmic, mysterious, space-themed naming. Role names otherworldly (e.g. "🌌 Void Walker", "⭐ Star Forger"). Channel names cosmic (e.g. "🌌-the-void", "⚡-nebula-chat"). Welcome message mysterious, cosmic and epic. Prefer emojis: 🌌 ⭐ 🪐 💫 ⚡ 🌠 🔮 🛸`
+};
+
+async function generateServerStructure(userRequest, separator = '-', personality = 'void') {
     if (!process.env.GROQ_API_KEY) {
         throw new Error('GROQ_API_KEY is missing from your .env file');
     }
 
+    const personalityInstruction = PERSONALITY_PROMPTS[personality] || PERSONALITY_PROMPTS.void;
+
     const prompt = `You are an expert Discord server architect. You must create a COMPLETE and PROFESSIONAL server.
 
 Server description: "${userRequest}"
+
+${personalityInstruction}
 
 CRITICAL LANGUAGE RULE:
 - ALWAYS write EVERYTHING in ENGLISH regardless of the input language
