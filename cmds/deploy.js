@@ -47,6 +47,13 @@ module.exports = {
 
         // ── Slash command → show modal ───────────────────────────────────────
         if (interaction.isChatInputCommand()) {
+            if (interaction.user.id !== interaction.guild.ownerId) {
+                return interaction.reply({
+                    content: '❌ Only the server owner can use this command.',
+                    flags: [MessageFlags.Ephemeral]
+                });
+            }
+
             const modal = new ModalBuilder()
                 .setCustomId('deploy_modal')
                 .setTitle('🤖 Create a server with AI');
@@ -79,6 +86,13 @@ module.exports = {
 
         // ── Modal submit ─────────────────────────────────────────────────────
         if (interaction.isModalSubmit() && interaction.customId === 'deploy_modal') {
+            if (interaction.user.id !== interaction.guild.ownerId) {
+                return interaction.reply({
+                    content: '❌ Only the server owner can use this command.',
+                    flags: [MessageFlags.Ephemeral]
+                });
+            }
+
             const description = interaction.fields.getTextInputValue('description');
             const separatorInput = interaction.fields.getTextInputValue('separator') || '';
             const separator = resolveSeparator(separatorInput);
