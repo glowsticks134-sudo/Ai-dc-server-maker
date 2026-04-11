@@ -38,7 +38,7 @@ module.exports = {
 
         if (interaction.user.id !== interaction.guild.ownerId) {
             return interaction.reply({
-                content: '❌ Only the server owner can add custom templates.',
+                content: '🚫 Only the station commander can chart new star maps.',
                 flags: [MessageFlags.Ephemeral]
             });
         }
@@ -49,7 +49,7 @@ module.exports = {
 
         if (!code) {
             return interaction.reply({
-                content: '❌ Invalid template link. Use a link like `https://discord.new/XXXXXXXXXX`.',
+                content: '❌ Invalid template coordinates. Use a link like `https://discord.new/XXXXXXXXXX`.',
                 flags: [MessageFlags.Ephemeral]
             });
         }
@@ -57,15 +57,15 @@ module.exports = {
         await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
 
         try {
-            const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
+            const rest    = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
             const apiData = await rest.get(Routes.template(code));
 
             const key = label.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '').slice(0, 40);
             if (!key) {
-                return interaction.editReply({ content: '❌ Template name is invalid. Use letters, numbers, or spaces.' });
+                return interaction.editReply({ content: '❌ Star map name is invalid. Use letters, numbers, or spaces.' });
             }
 
-            const template = convertDiscordTemplate(apiData, label);
+            const template     = convertDiscordTemplate(apiData, label);
             addGuildTemplate(interaction.guild.id, key, template);
 
             const categoryCount = template.structure.categories.length;
@@ -74,18 +74,18 @@ module.exports = {
 
             await interaction.editReply({
                 content: [
-                    `✅ Custom template **"${label}"** saved!`,
-                    `> ${roleCount} roles · ${categoryCount} categories · ${channelCount} channels`,
+                    `✅ **Star map "${label}" charted and saved to your constellation!**`,
+                    `> 👥 ${roleCount} roles · 📁 ${categoryCount} categories · 💬 ${channelCount} channels`,
                     '',
-                    'It now appears in `/templates` (browse) and `/ownertemplates` (deploy).'
+                    '🌌 It now appears in `/templates` (browse) and `/ownertemplates` (deploy).'
                 ].join('\n')
             });
 
-            console.log(`📋 Custom template added: "${label}" (${code}) in guild ${interaction.guild.id}`);
+            console.log(`🌌 Star map added: "${label}" (${code}) in guild ${interaction.guild.id}`);
         } catch (err) {
-            console.error('❌ Failed to import template:', err.message);
+            console.error('❌ Failed to import star map:', err.message);
             await interaction.editReply({
-                content: `❌ Could not fetch that template. Make sure the link is valid and the template is public.\n> Error: ${err.message}`
+                content: `❌ Could not chart that template — make sure the link is valid and the template is public.\n> \`${err.message}\``
             });
         }
     }

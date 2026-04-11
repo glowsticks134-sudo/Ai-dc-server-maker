@@ -1,14 +1,13 @@
 /**
  * cmds/invite.js
- * /invite → Shows bot authorization info and invite link
+ * /invite → Shows bot authorization info and invite link (public — visible to everyone)
  */
 
 const {
     EmbedBuilder,
     ActionRowBuilder,
     ButtonBuilder,
-    ButtonStyle,
-    MessageFlags
+    ButtonStyle
 } = require('discord.js');
 
 const VOID_COLOR = 0x6B48FF;
@@ -16,42 +15,46 @@ const VOID_COLOR = 0x6B48FF;
 module.exports = {
     data: {
         name: 'invite',
-        description: '🔗 Get the link to add Void Builder to your server'
+        description: '🛸 Beam Void Builder into your own server — get the invite link'
     },
 
     async execute(interaction) {
         if (!interaction.isChatInputCommand()) return;
 
-        const clientId = process.env.CLIENT_ID;
+        const clientId  = process.env.CLIENT_ID;
         const inviteUrl = `https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=8&scope=bot+applications.commands`;
 
         const embed = new EmbedBuilder()
             .setTitle('🌌 Add Void Builder to Your Server')
             .setDescription(
-                'Void Builder is an **AI-powered Discord server architect** that generates complete server structures ' +
-                '— roles, categories, channels, and permissions — from a single description.\n\n' +
-                'Click **Add to Server** below to authorize the bot and invite it to your Discord server.'
+                '**Void Builder** is an AI-powered Discord server architect that generates complete server structures ' +
+                '— roles, categories, channels, and permissions — from a single description or a guided wizard.\n\n' +
+                'Click **Beam Me In** below to authorize the bot and invite it to your Discord server.'
             )
             .setColor(VOID_COLOR)
             .addFields(
                 {
                     name: '🔐 Required Permissions',
                     value: [
-                        '`Administrator` — Needed to manage roles, channels, and permissions during server generation.',
+                        '`Administrator` — Required to forge roles, construct channels, and configure permissions during server generation.',
                         '',
-                        '> ⚠️ The bot only uses these permissions when you explicitly run a command. It does not act on its own.'
+                        '> ⚠️ The bot only activates when you run a command. It never acts on its own.'
                     ].join('\n'),
                     inline: false
                 },
                 {
-                    name: '✨ What You Get',
+                    name: '🚀 Command Arsenal',
                     value: [
-                        '• `/deploy` — AI-generated server from a description',
-                        '• `/templates` — Browse pre-built server layouts',
+                        '• `/deploy` — AI-generate a server from a description or the wizard',
+                        '• `/wizard` — Build a server using buttons & menus — zero typing',
+                        '• `/templates` — Browse pre-built server constellations',
+                        '• `/export` — Snapshot your server as a shareable JSON file',
+                        '• `/import` — Restore a server from an exported file',
                         '• `/setup` — Deploy tickets, reaction roles & welcome systems',
-                        '• `/wipe` — Clean slate your server in seconds',
+                        '• `/editserver` — Launch channels and forge roles on the fly',
+                        '• `/wipe` — Collapse your server into the void and start fresh',
                         '• `/prompt` — AI prompt engineering tools',
-                        '• `/plan` — View your current feature tier'
+                        '• `/plan` — View your current orbit tier',
                     ].join('\n'),
                     inline: false
                 }
@@ -61,17 +64,14 @@ module.exports = {
             .setTimestamp();
 
         const addButton = new ButtonBuilder()
-            .setLabel('Add to Server')
+            .setLabel('Beam Me In')
             .setStyle(ButtonStyle.Link)
             .setURL(inviteUrl)
             .setEmoji('🚀');
 
-        const row = new ActionRowBuilder().addComponents(addButton);
-
         await interaction.reply({
             embeds: [embed],
-            components: [row],
-            flags: [MessageFlags.Ephemeral]
+            components: [new ActionRowBuilder().addComponents(addButton)]
         });
     }
 };

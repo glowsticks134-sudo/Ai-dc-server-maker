@@ -55,7 +55,7 @@ module.exports = {
         if (!interaction.isChatInputCommand()) return;
 
         if (!isAuthorised(interaction.guild.id, interaction.user.id, interaction.guild.ownerId)) {
-            return interaction.reply({ content: '❌ Only the server owner or a co-owner can edit the server.', flags: [MessageFlags.Ephemeral] });
+            return interaction.reply({ content: '🚫 Only the station commander or a co-pilot can modify this vessel.', flags: [MessageFlags.Ephemeral] });
         }
 
         const sub   = interaction.options.getSubcommand();
@@ -63,10 +63,10 @@ module.exports = {
 
         // ── Add Channel ───────────────────────────────────────────────────────
         if (sub === 'addchannel') {
-            const name     = interaction.options.getString('name').toLowerCase().replace(/\s+/g, '-');
-            const catName  = interaction.options.getString('category');
-            const type     = interaction.options.getString('type') || 'text';
-            const isVoice  = type === 'voice';
+            const name    = interaction.options.getString('name').toLowerCase().replace(/\s+/g, '-');
+            const catName = interaction.options.getString('category');
+            const type    = interaction.options.getString('type') || 'text';
+            const isVoice = type === 'voice';
 
             await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
 
@@ -84,18 +84,20 @@ module.exports = {
                 parent: parent?.id || null
             }).catch(err => { throw new Error(err.message); });
 
-            return interaction.editReply({ content: `✅ ${isVoice ? '🔊' : '💬'} Channel ${channel} created${parent ? ` under **${parent.name}**` : ''}.` });
+            return interaction.editReply({
+                content: `✅ ${isVoice ? '🔊 Voice channel' : '💬 Text channel'} ${channel} **launched into orbit**${parent ? ` under **${parent.name}**` : ''}.`
+            });
         }
 
         // ── Remove Channel ────────────────────────────────────────────────────
         if (sub === 'removechannel') {
-            const name = interaction.options.getString('name').toLowerCase();
+            const name    = interaction.options.getString('name').toLowerCase();
             const channel = guild.channels.cache.find(c => c.name.toLowerCase() === name && c.type !== ChannelType.GuildCategory);
 
-            if (!channel) return interaction.reply({ content: `❌ No channel named **${name}** found.`, flags: [MessageFlags.Ephemeral] });
+            if (!channel) return interaction.reply({ content: `🌑 No channel named **${name}** found in this cosmos.`, flags: [MessageFlags.Ephemeral] });
 
-            await channel.delete('editserver command');
-            return interaction.reply({ content: `✅ Channel **#${name}** deleted.`, flags: [MessageFlags.Ephemeral] });
+            await channel.delete('editserver — collapsed into void');
+            return interaction.reply({ content: `🌑 Channel **#${name}** has been **collapsed into the void**.`, flags: [MessageFlags.Ephemeral] });
         }
 
         // ── Add Role ──────────────────────────────────────────────────────────
@@ -108,10 +110,10 @@ module.exports = {
             const role = await guild.roles.create({
                 name,
                 color,
-                reason: 'editserver command'
+                reason: 'editserver — forged by Void Builder'
             }).catch(err => { throw new Error(err.message); });
 
-            return interaction.editReply({ content: `✅ Role **${role.name}** created.` });
+            return interaction.editReply({ content: `⭐ Role **${role.name}** has been **forged in the cosmos**.` });
         }
 
         // ── Remove Role ───────────────────────────────────────────────────────
@@ -119,10 +121,10 @@ module.exports = {
             const name = interaction.options.getString('name').toLowerCase();
             const role = guild.roles.cache.find(r => r.name.toLowerCase() === name && !r.managed);
 
-            if (!role) return interaction.reply({ content: `❌ No role named **${name}** found (or it's a managed role).`, flags: [MessageFlags.Ephemeral] });
+            if (!role) return interaction.reply({ content: `☄️ No role named **${name}** found in this dimension (or it's a managed role).`, flags: [MessageFlags.Ephemeral] });
 
-            await role.delete('editserver command');
-            return interaction.reply({ content: `✅ Role **${name}** deleted.`, flags: [MessageFlags.Ephemeral] });
+            await role.delete('editserver — disintegrated by Void Builder');
+            return interaction.reply({ content: `☄️ Role **${name}** has been **disintegrated from existence**.`, flags: [MessageFlags.Ephemeral] });
         }
     }
 };

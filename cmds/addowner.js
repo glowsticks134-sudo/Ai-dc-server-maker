@@ -3,8 +3,10 @@
  * Lets the server owner grant/revoke /deploy access to extra users (co-owners)
  */
 
-const { MessageFlags } = require('discord.js');
+const { EmbedBuilder, MessageFlags } = require('discord.js');
 const { getCoOwners, addCoOwner, removeCoOwner } = require('../data/owners');
+
+const VOID_COLOR = 0x6B48FF;
 
 module.exports = {
     data: {
@@ -40,7 +42,7 @@ module.exports = {
             {
                 type: 1,
                 name: 'list',
-                description: '🛸 View all current co-pilots aboard this vessel'
+                description: '🛸 View all active co-pilots aboard this vessel'
             }
         ]
     },
@@ -50,12 +52,12 @@ module.exports = {
 
         if (interaction.user.id !== interaction.guild.ownerId) {
             return interaction.reply({
-                content: '❌ Only the server owner can manage co-owners.',
+                content: '🚫 Only the station commander can manage co-pilots.',
                 flags: [MessageFlags.Ephemeral]
             });
         }
 
-        const sub    = interaction.options.getSubcommand();
+        const sub     = interaction.options.getSubcommand();
         const guildId = interaction.guild.id;
 
         if (sub === 'add') {
@@ -63,13 +65,13 @@ module.exports = {
 
             if (user.id === interaction.guild.ownerId) {
                 return interaction.reply({
-                    content: '⚠️ You are already the server owner.',
+                    content: '⚠️ Commander, you already helm this station.',
                     flags: [MessageFlags.Ephemeral]
                 });
             }
             if (user.bot) {
                 return interaction.reply({
-                    content: '❌ Bots cannot be added as co-owners.',
+                    content: '🤖 Droids cannot serve as co-pilots aboard this vessel.',
                     flags: [MessageFlags.Ephemeral]
                 });
             }
@@ -77,36 +79,41 @@ module.exports = {
             const added = addCoOwner(guildId, user.id);
             return interaction.reply({
                 content: added
-                    ? `✅ ${user} is now a co-owner and can use \`/deploy\`.`
-                    : `⚠️ ${user} is already a co-owner.`,
+                    ? `✅ ${user} has been granted **co-pilot clearance** and can now use \`/deploy\`.`
+                    : `⚠️ ${user} is already aboard as a co-pilot.`,
                 flags: [MessageFlags.Ephemeral]
             });
         }
 
         if (sub === 'remove') {
-            const user = interaction.options.getUser('user');
+            const user    = interaction.options.getUser('user');
             const removed = removeCoOwner(guildId, user.id);
             return interaction.reply({
                 content: removed
-                    ? `✅ Removed co-owner access from ${user}.`
-                    : `⚠️ ${user} is not a co-owner.`,
+                    ? `✅ ${user}'s **co-pilot clearance** has been revoked.`
+                    : `⚠️ ${user} holds no co-pilot clearance to revoke.`,
                 flags: [MessageFlags.Ephemeral]
             });
         }
 
         if (sub === 'list') {
             const list = getCoOwners(guildId);
+
             if (list.length === 0) {
                 return interaction.reply({
-                    content: '📋 No co-owners set. Use `/addowner add @user` to add one.',
+                    content: '🛸 No co-pilots are aboard this vessel. Use `/addowner add @user` to beam one in.',
                     flags: [MessageFlags.Ephemeral]
                 });
             }
-            const mentions = list.map(id => `<@${id}>`).join('\n');
-            return interaction.reply({
-                content: `📋 **Co-owners who can use \`/deploy\`:**\n${mentions}`,
-                flags: [MessageFlags.Ephemeral]
-            });
+
+            const embed = new EmbedBuilder()
+                .setTitle('🛸 Active Co-Pilots')
+                .setDescription(list.map(id => `• <@${id}>`).join('\n'))
+                .setColor(VOID_COLOR)
+                .setFooter({ text: '⚡ Void Builder • Co-pilots can use /deploy and related commands' })
+                .setTimestamp();
+
+            return interaction.reply({ embeds: [embed], flags: [MessageFlags.Ephemeral] });
         }
     }
 };

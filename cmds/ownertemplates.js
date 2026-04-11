@@ -8,12 +8,15 @@ const {
     StringSelectMenuBuilder,
     ButtonBuilder,
     ButtonStyle,
+    EmbedBuilder,
     MessageFlags
 } = require('discord.js');
 
 const { buildServer } = require('../builder');
-const { TEMPLATES } = require('../data/templates');
+const { TEMPLATES }   = require('../data/templates');
 const { getGuildTemplates } = require('../data/customTemplates');
+
+const VOID_COLOR = 0x6B48FF;
 
 function resolveTemplate(guildId, value) {
     if (value.startsWith('c:')) {
@@ -34,88 +37,87 @@ module.exports = {
         if (interaction.isChatInputCommand()) {
             if (interaction.user.id !== interaction.guild.ownerId) {
                 return interaction.reply({
-                    content: '❌ Only the server owner can use this command.',
+                    content: '🚫 Only the station commander can deploy constellations.',
                     flags: [MessageFlags.Ephemeral]
                 });
             }
 
             const builtIn = Object.entries(TEMPLATES).map(([key, tpl]) => ({
-                label: tpl.label,
+                label:       tpl.label,
                 description: tpl.description,
-                value: key,
-                emoji: tpl.emoji
+                value:       key,
+                emoji:       tpl.emoji
             }));
 
             const custom = Object.entries(getGuildTemplates(interaction.guild.id)).map(([key, tpl]) => ({
-                label: `${tpl.label} ✦`,
-                description: tpl.description?.slice(0, 100) || 'Custom template',
-                value: `c:${key}`,
-                emoji: tpl.emoji || '🌐'
+                label:       `${tpl.label} ✦`,
+                description: tpl.description?.slice(0, 100) || 'Custom constellation',
+                value:       `c:${key}`,
+                emoji:       tpl.emoji || '🌐'
             }));
 
             const options = [...builtIn, ...custom];
 
             if (options.length === 0) {
                 return interaction.reply({
-                    content: '❌ No templates available yet.',
+                    content: '❌ No constellations charted yet.',
                     flags: [MessageFlags.Ephemeral]
                 });
             }
 
             const selectMenu = new StringSelectMenuBuilder()
                 .setCustomId('owner_template_select')
-                .setPlaceholder('Choose a template to deploy...')
+                .setPlaceholder('Choose a constellation to deploy…')
                 .addOptions(options);
 
             await interaction.reply({
-                content: '### 🔒 Deploy a Server Template\nPick a template to preview it before deploying:\n*Custom templates are marked with ✦*',
+                content: '### 🔒 Deploy a Constellation\nSelect a template to preview before warping:\n*Custom constellations are marked with ✦*',
                 components: [new ActionRowBuilder().addComponents(selectMenu)],
                 flags: [MessageFlags.Ephemeral]
             });
             return;
         }
 
-        // ── Select menu → show preview + confirm/cancel buttons ───────────────
+        // ── Select menu → show preview embed + confirm/cancel buttons ─────────
         if (interaction.isStringSelectMenu() && interaction.customId === 'owner_template_select') {
             const value = interaction.values[0];
             const tpl   = resolveTemplate(interaction.guild.id, value);
 
             if (!tpl) {
-                return interaction.update({ content: '❌ Unknown template.', components: [] });
+                return interaction.update({ content: '❌ Unknown constellation.', components: [] });
             }
 
-            const roleList = tpl.structure.roles.map(r => `• ${r.name}`).join('\n');
+            const roleList     = tpl.structure.roles.map(r => `• ${r.name}`).join('\n') || '*None*';
             const categoryList = tpl.structure.categories.map(c => {
                 const badge = c.staffOnly ? ' *(staff only)*' : c.readOnly ? ' *(read only)*' : '';
-                return `• ${c.name}${badge} — ${c.channels.length} channels`;
-            }).join('\n');
+                return `• **${c.name}**${badge} — ${c.channels.length} channel${c.channels.length !== 1 ? 's' : ''}`;
+            }).join('\n') || '*None*';
 
-            const preview = [
-                `### ${tpl.emoji || '🌐'} ${tpl.label}`,
-                `> ${tpl.description || ''}`,
-                '',
-                `**Roles (${tpl.structure.roles.length})**`,
-                roleList,
-                '',
-                `**Categories (${tpl.structure.categories.length})**`,
-                categoryList,
-                '',
-                '⚠️ **This will delete all existing channels and roles.** Are you sure?'
-            ].join('\n');
+            const embed = new EmbedBuilder()
+                .setTitle(`${tpl.emoji || '🌐'}  ${tpl.label}`)
+                .setDescription(tpl.description || '*No description provided.*')
+                .setColor(VOID_COLOR)
+                .addFields(
+                    { name: `👥 Roles (${tpl.structure.roles.length})`, value: roleList, inline: true },
+                    { name: `📁 Categories (${tpl.structure.categories.length})`, value: categoryList, inline: false }
+                )
+                .setFooter({ text: '⚠️  This will wipe all existing channels and roles — confirm to proceed.' });
 
             const confirmBtn = new ButtonBuilder()
                 .setCustomId(`owner_template_confirm:${value}`)
-                .setLabel('Deploy Template')
+                .setLabel('Warp Into Constellation')
                 .setStyle(ButtonStyle.Danger)
                 .setEmoji('🚀');
 
             const cancelBtn = new ButtonBuilder()
                 .setCustomId('owner_template_cancel')
-                .setLabel('Cancel')
-                .setStyle(ButtonStyle.Secondary);
+                .setLabel('Abort Mission')
+                .setStyle(ButtonStyle.Secondary)
+                .setEmoji('🌑');
 
             await interaction.update({
-                content: preview,
+                content: '',
+                embeds: [embed],
                 components: [new ActionRowBuilder().addComponents(confirmBtn, cancelBtn)]
             });
             return;
@@ -123,7 +125,7 @@ module.exports = {
 
         // ── Button: cancel ────────────────────────────────────────────────────
         if (interaction.isButton() && interaction.customId === 'owner_template_cancel') {
-            await interaction.update({ content: '❌ Template deployment cancelled.', components: [] });
+            await interaction.update({ content: '🌑 Mission aborted. The void remains undisturbed.', embeds: [], components: [] });
             return;
         }
 
@@ -131,41 +133,42 @@ module.exports = {
         if (interaction.isButton() && interaction.customId.startsWith('owner_template_confirm:')) {
             if (interaction.user.id !== interaction.guild.ownerId) {
                 return interaction.update({
-                    content: '❌ Only the server owner can deploy templates.',
+                    content: '🚫 Only the station commander can execute this warp.',
+                    embeds: [],
                     components: []
                 });
             }
 
-            // Preserve colons in value (e.g. "c:my_template")
             const value = interaction.customId.split(':').slice(1).join(':');
             const tpl   = resolveTemplate(interaction.guild.id, value);
 
             if (!tpl) {
-                return interaction.update({ content: '❌ Unknown template.', components: [] });
+                return interaction.update({ content: '❌ Unknown constellation.', embeds: [], components: [] });
             }
 
             await interaction.update({
-                content: `🔨 Deploying **${tpl.label}**... The server will be rebuilt — don't worry if you lose connection!`,
+                content: `🚀 Warping into **${tpl.label}**... The server is being rebuilt — you may lose connection briefly!`,
+                embeds: [],
                 components: []
             });
 
             try {
-                console.log(`\n📋 Deploying template: "${tpl.label}"`);
+                console.log(`\n🌌 Deploying constellation: "${tpl.label}"`);
                 await buildServer(interaction.guild, tpl.structure);
 
                 try {
                     await interaction.followUp({
-                        content: `✨ **${tpl.structure.serverName}** deployed! ${tpl.structure.roles.length} roles and ${tpl.structure.categories.length} categories created.`,
+                        content: `✨ **${tpl.structure.serverName}** is live! ${tpl.structure.roles.length} roles and ${tpl.structure.categories.length} categories forged.`,
                         flags: [MessageFlags.Ephemeral]
                     });
                 } catch {
-                    console.log('ℹ️ Could not send followUp (channel was deleted during cleanup) — this is normal.');
+                    console.log('ℹ️ Could not send followUp (channel deleted during rebuild) — this is normal.');
                 }
             } catch (error) {
-                console.error('❌ Template deployment error:', error.message);
+                console.error('❌ Constellation deployment error:', error.message);
                 try {
                     await interaction.followUp({
-                        content: `❌ Error: ${error.message}`,
+                        content: `❌ Warp failure: ${error.message}`,
                         flags: [MessageFlags.Ephemeral]
                     });
                 } catch {}

@@ -10,7 +10,7 @@ const VOID_COLOR = 0x6B48FF;
 module.exports = {
     data: {
         name: 'order',
-        description: '🚀 Transmit an order — opens a private channel with the Void crew',
+        description: '🛸 Transmit a commission — opens a private channel with the Void crew',
         options: [
             {
                 type: 3,
@@ -32,7 +32,6 @@ module.exports = {
         await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
 
         try {
-            // Find or create an orders category
             let category = guild.channels.cache.find(c => c.type === ChannelType.GuildCategory && c.name.toLowerCase().includes('order'));
 
             if (!category) {
@@ -47,14 +46,13 @@ module.exports = {
                 ];
 
                 category = await guild.channels.create({
-                    name: '📦 ORDERS',
+                    name: '🛸 COMMISSIONS',
                     type: ChannelType.GuildCategory,
                     permissionOverwrites: overwrites
                 });
             }
 
-            // Create private ticket channel for this order
-            const channelName = `order-${user.username.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 20)}`;
+            const channelName = `commission-${user.username.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 20)}`;
 
             const staffRoles = guild.roles.cache.filter(r =>
                 !r.managed && r.name !== '@everyone' &&
@@ -75,24 +73,26 @@ module.exports = {
             });
 
             const embed = new EmbedBuilder()
-                .setTitle('📦 New Order')
-                .setDescription(`**From:** ${user} (${user.tag})\n\n**Details:**\n${details}`)
+                .setTitle('🛸 New Commission Incoming')
+                .setDescription(`**Transmitted by:** ${user} (${user.tag})\n\n**Mission Details:**\n${details}`)
                 .setColor(VOID_COLOR)
                 .setThumbnail(user.displayAvatarURL())
-                .setFooter({ text: '⚡ Void Builder Orders' })
+                .setFooter({ text: '⚡ Void Builder • Commission System' })
                 .setTimestamp();
 
             await channel.send({
-                content: `${user} — **Your order has been received!** The team will be with you shortly.\n\nStaff: ${staffRoles.map(r => `<@&${r.id}>`).join(' ') || 'No staff roles found'}`,
+                content: `${user} — **Your transmission has been received!** The Void crew will respond shortly.\n\nCrew: ${staffRoles.map(r => `<@&${r.id}>`).join(' ') || '*No staff roles found*'}`,
                 embeds: [embed]
             });
 
-            await interaction.editReply({ content: `✅ **Order placed!** Head over to ${channel} — the team will respond there.` });
+            await interaction.editReply({
+                content: `✅ **Transmission sent!** Head to ${channel} — the Void crew will respond there.`
+            });
 
-            console.log(`📦 Order from ${user.tag} in guild ${guild.id}: "${details}"`);
+            console.log(`🛸 Commission from ${user.tag} in guild ${guild.id}: "${details}"`);
         } catch (err) {
-            console.error('❌ Order error:', err.message);
-            await interaction.editReply({ content: `❌ Could not create an order channel: ${err.message}` });
+            console.error('❌ Commission error:', err.message);
+            await interaction.editReply({ content: `❌ Could not open a commission channel: ${err.message}` });
         }
     }
 };
