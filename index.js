@@ -71,12 +71,13 @@ const MODAL_ROUTES = {
 };
 
 const SELECT_ROUTES = {
-    prompt_select:    'prompt',
-    template_select:  'templates'
+    prompt_select:        'prompt',
+    pub_template_select:  'templates',
+    owner_template_select:'ownertemplates'
 };
 
 const BUTTON_ROUTES = {
-    template_cancel: 'templates'
+    owner_template_cancel: 'ownertemplates'
 };
 
 // ── Events ────────────────────────────────────────────────────────────────────
@@ -104,7 +105,7 @@ client.on('interactionCreate', async interaction => {
     } else if (interaction.isButton()) {
         const baseId = interaction.customId.split(':')[0];
         cmdName = BUTTON_ROUTES[baseId] || BUTTON_ROUTES[interaction.customId];
-        if (!cmdName && interaction.customId.startsWith('template_confirm:')) cmdName = 'templates';
+        if (!cmdName && interaction.customId.startsWith('owner_template_confirm:')) cmdName = 'ownertemplates';
     }
 
     if (!cmdName) return;
