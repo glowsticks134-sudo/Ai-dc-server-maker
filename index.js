@@ -77,7 +77,15 @@ const SELECT_ROUTES = {
 };
 
 const BUTTON_ROUTES = {
-    owner_template_cancel: 'ownertemplates'
+    owner_template_cancel: 'ownertemplates',
+    wipe_confirm:          'wipe',
+    wipe_cancel:           'wipe',
+    preview_build:         'deploy',
+    preview_cancel:        'deploy',
+    preview_regen:         'deploy',
+    ticket_open:           'setup',
+    ticket_close:          'setup',
+    rr:                    'setup'
 };
 
 // ── Events ────────────────────────────────────────────────────────────────────
