@@ -20,12 +20,12 @@ const VOID_COLOR = 0x6B48FF;
 module.exports = {
     data: {
         name: 'setup',
-        description: '⚙️ Set up built-in systems: tickets, reaction roles, moderation, welcome',
+        description: '⚙️ Deploy built-in systems aboard your server',
         options: [
-            { type: 1, name: 'tickets',      description: '🎫 Create a ticket system with open/close buttons' },
-            { type: 1, name: 'reactionroles', description: '🎭 Post a role-picker with buttons in a roles channel' },
-            { type: 1, name: 'moderation',   description: '🛡️ Create moderation log channels' },
-            { type: 1, name: 'welcome',      description: '👋 Post a welcome embed in the first public channel' }
+            { type: 1, name: 'tickets',       description: '🎫 Launch a ticket system with open/close warp gates' },
+            { type: 1, name: 'reactionroles', description: '🎭 Broadcast a role-picker constellation for your crew' },
+            { type: 1, name: 'moderation',    description: '🛡️ Construct staff-only moderation command centers' },
+            { type: 1, name: 'welcome',       description: '🌌 Transmit a welcome beacon to the first public channel' }
         ]
     },
 

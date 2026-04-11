@@ -9,17 +9,17 @@ const { getCoOwners, addCoOwner, removeCoOwner } = require('../data/owners');
 module.exports = {
     data: {
         name: 'addowner',
-        description: '👑 Manage co-owners who can use /deploy',
+        description: '🌌 Grant or revoke co-pilot access to Void Builder commands',
         options: [
             {
                 type: 1,
                 name: 'add',
-                description: 'Grant a user co-owner access to /deploy',
+                description: '🚀 Beam a crew member into co-pilot clearance',
                 options: [
                     {
                         type: 6,
                         name: 'user',
-                        description: 'The user to add as co-owner',
+                        description: 'The crew member to promote to co-pilot',
                         required: true
                     }
                 ]
@@ -27,12 +27,12 @@ module.exports = {
             {
                 type: 1,
                 name: 'remove',
-                description: "Revoke a user's co-owner access",
+                description: '🌑 Revoke a crew member\'s co-pilot clearance',
                 options: [
                     {
                         type: 6,
                         name: 'user',
-                        description: 'The user to remove',
+                        description: 'The crew member to demote',
                         required: true
                     }
                 ]
@@ -40,7 +40,7 @@ module.exports = {
             {
                 type: 1,
                 name: 'list',
-                description: 'List all co-owners in this server'
+                description: '🛸 View all current co-pilots aboard this vessel'
             }
         ]
     },

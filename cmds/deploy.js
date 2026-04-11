@@ -71,7 +71,7 @@ function previewButtons() {
 module.exports = {
     data: {
         name: 'deploy',
-        description: '🤖 Generate and deploy a complete Discord server with AI'
+        description: '🚀 Architect and launch a complete Discord server using the Void AI'
     },
 
     async execute(interaction) {

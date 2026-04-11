@@ -10,12 +10,12 @@ const VOID_COLOR = 0x6B48FF;
 module.exports = {
     data: {
         name: 'order',
-        description: '📦 Place an order — opens a private ticket with the team',
+        description: '🚀 Transmit an order — opens a private channel with the Void crew',
         options: [
             {
                 type: 3,
                 name: 'details',
-                description: 'What would you like to order? (e.g. custom bot, Discord server setup)',
+                description: 'What would you like commissioned? (e.g. custom bot, server architecture)',
                 required: true,
                 max_length: 500
             }

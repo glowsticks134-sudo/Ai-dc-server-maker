@@ -11,7 +11,7 @@ const VOID_COLOR = 0x6B48FF;
 module.exports = {
     data: {
         name: 'wipe',
-        description: '🌌 (Owner only) Wipe all channels and roles from this server'
+        description: '🌌 (Owner only) Collapse all channels and roles into the void'
     },
 
     async execute(interaction) {

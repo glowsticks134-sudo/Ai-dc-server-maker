@@ -20,7 +20,7 @@ const { generatePrompt } = require('../ai-logic');
 module.exports = {
     data: {
         name: 'prompt',
-        description: '✍️ Generate or improve a prompt with AI'
+        description: '✨ Generate or enhance prompts using the Void AI engine'
     },
 
     async execute(interaction) {

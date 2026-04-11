@@ -22,7 +22,7 @@ function resolveTemplate(guildId, value) {
 module.exports = {
     data: {
         name: 'templates',
-        description: '📋 Browse available server templates'
+        description: '🌠 Explore available server constellations and blueprints'
     },
 
     async execute(interaction) {

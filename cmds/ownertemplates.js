@@ -25,7 +25,7 @@ function resolveTemplate(guildId, value) {
 module.exports = {
     data: {
         name: 'ownertemplates',
-        description: '🔒 (Owner only) Deploy a pre-built server template instantly'
+        description: '🔒 (Owner only) Warp your server into a pre-built constellation instantly'
     },
 
     async execute(interaction) {

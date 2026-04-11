@@ -8,17 +8,17 @@ const { isAuthorised } = require('../data/owners');
 module.exports = {
     data: {
         name: 'editserver',
-        description: '✏️ Add or remove channels and roles without rebuilding the whole server',
+        description: '🛸 Modify your server\'s channels and roles without a full re-launch',
         options: [
             {
                 type: 1,
                 name: 'addchannel',
-                description: 'Add a new channel to the server',
+                description: '✨ Launch a new channel into orbit',
                 options: [
                     { type: 3, name: 'name', description: 'Channel name (e.g. general)', required: true },
-                    { type: 3, name: 'category', description: 'Category name to add it under (optional)', required: false },
+                    { type: 3, name: 'category', description: 'Category to orbit under (optional)', required: false },
                     {
-                        type: 3, name: 'type', description: 'text or voice (default: text)', required: false,
+                        type: 3, name: 'type', description: 'Text or voice — choose your transmission type', required: false,
                         choices: [{ name: 'Text', value: 'text' }, { name: 'Voice', value: 'voice' }]
                     }
                 ]
@@ -26,26 +26,26 @@ module.exports = {
             {
                 type: 1,
                 name: 'removechannel',
-                description: 'Delete a channel by name',
+                description: '🌑 Collapse a channel into the void',
                 options: [
-                    { type: 3, name: 'name', description: 'The exact channel name to delete', required: true }
+                    { type: 3, name: 'name', description: 'The exact channel name to collapse', required: true }
                 ]
             },
             {
                 type: 1,
                 name: 'addrole',
-                description: 'Add a new role to the server',
+                description: '⭐ Forge a new rank in the cosmos',
                 options: [
-                    { type: 3, name: 'name', description: 'Role name', required: true },
-                    { type: 3, name: 'color', description: 'Role color in hex (e.g. #FF0000)', required: false }
+                    { type: 3, name: 'name', description: 'Name for this new cosmic rank', required: true },
+                    { type: 3, name: 'color', description: 'Role color in hex (e.g. #6B48FF)', required: false }
                 ]
             },
             {
                 type: 1,
                 name: 'removerole',
-                description: 'Delete a role by name',
+                description: '☄️ Disintegrate a role from existence',
                 options: [
-                    { type: 3, name: 'name', description: 'The exact role name to delete', required: true }
+                    { type: 3, name: 'name', description: 'The exact role name to disintegrate', required: true }
                 ]
             }
         ]

@@ -6,7 +6,7 @@ const VOID_COLOR = 0x6B48FF;
 module.exports = {
     data: {
         name: 'plan',
-        description: '🌌 View your current plan and available tiers'
+        description: '🌠 View your current orbit tier and available upgrades'
     },
 
     async execute(interaction) {

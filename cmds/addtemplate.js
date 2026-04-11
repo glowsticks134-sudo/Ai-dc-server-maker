@@ -14,20 +14,20 @@ function extractCode(link) {
 module.exports = {
     data: {
         name: 'addtemplate',
-        description: '🔒 (Owner only) Import a Discord template link as a custom server template',
+        description: '🔒 (Owner only) Chart a Discord template into your personal constellation',
         default_member_permissions: '0',
         options: [
             {
                 type: 3,
                 name: 'name',
-                description: 'A short name for this template (e.g. "My Gaming Server")',
+                description: 'A name for this star map (e.g. "My Gaming Galaxy")',
                 required: true,
                 max_length: 50
             },
             {
                 type: 3,
                 name: 'link',
-                description: 'The Discord template link (discord.new/XXXX or discord.com/template/XXXX)',
+                description: 'The Discord template link to import from deep space (discord.new/XXXX)',
                 required: true
             }
         ]
