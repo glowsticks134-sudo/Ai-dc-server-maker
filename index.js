@@ -66,6 +66,7 @@ async function registerAllGuilds() {
 // ── Route table: customId → command name ──────────────────────────────────────
 const MODAL_ROUTES = {
     deploy_modal:        'deploy',
+    import_modal:        'import',
     prompt_idea_modal:   'prompt',
     prompt_improve_modal:'prompt'
 };
@@ -73,6 +74,8 @@ const MODAL_ROUTES = {
 const SELECT_ROUTES = {
     deploy_sep_select:         'deploy',
     deploy_personality_select: 'deploy',
+    wizard_type_select:        'wizard',
+    wizard_pers_select:        'wizard',
     prompt_select:             'prompt',
     pub_template_select:       'templates',
     owner_template_select:     'ownertemplates'
@@ -86,6 +89,12 @@ const BUTTON_ROUTES = {
     preview_cancel:        'deploy',
     preview_regen:         'deploy',
     suggestion_toggle:     'deploy',
+    wizard_size_btn:       'wizard',
+    wizard_addon:          'wizard',
+    wizard_build:          'wizard',
+    wizard_cancel:         'wizard',
+    import_build:          'import',
+    import_cancel:         'import',
     ticket_open:           'setup',
     ticket_close:          'setup',
     rr:                    'setup'
