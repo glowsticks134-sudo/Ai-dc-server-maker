@@ -69,7 +69,8 @@ module.exports = {
             .setURL(inviteUrl)
             .setEmoji('🚀');
 
-        await interaction.reply({
+        await interaction.deferReply();
+        await interaction.editReply({
             embeds: [embed],
             components: [new ActionRowBuilder().addComponents(addButton)]
         });
