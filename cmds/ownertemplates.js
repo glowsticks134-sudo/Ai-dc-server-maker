@@ -1,6 +1,6 @@
 /**
  * cmds/ownertemplates.js
- * /ownertemplates → Owner-only command to deploy a server template
+ * /ownertemplates → Owner-only command to deploy a server template (built-in + custom)
  */
 
 const {
@@ -13,6 +13,14 @@ const {
 
 const { buildServer } = require('../builder');
 const { TEMPLATES } = require('../data/templates');
+const { getGuildTemplates } = require('../data/customTemplates');
+
+function resolveTemplate(guildId, value) {
+    if (value.startsWith('c:')) {
+        return getGuildTemplates(guildId)[value.slice(2)] || null;
+    }
+    return TEMPLATES[value] || null;
+}
 
 module.exports = {
     data: {
@@ -31,12 +39,28 @@ module.exports = {
                 });
             }
 
-            const options = Object.entries(TEMPLATES).map(([key, tpl]) => ({
+            const builtIn = Object.entries(TEMPLATES).map(([key, tpl]) => ({
                 label: tpl.label,
                 description: tpl.description,
                 value: key,
                 emoji: tpl.emoji
             }));
+
+            const custom = Object.entries(getGuildTemplates(interaction.guild.id)).map(([key, tpl]) => ({
+                label: `${tpl.label} ✦`,
+                description: tpl.description?.slice(0, 100) || 'Custom template',
+                value: `c:${key}`,
+                emoji: tpl.emoji || '🌐'
+            }));
+
+            const options = [...builtIn, ...custom];
+
+            if (options.length === 0) {
+                return interaction.reply({
+                    content: '❌ No templates available yet.',
+                    flags: [MessageFlags.Ephemeral]
+                });
+            }
 
             const selectMenu = new StringSelectMenuBuilder()
                 .setCustomId('owner_template_select')
@@ -44,7 +68,7 @@ module.exports = {
                 .addOptions(options);
 
             await interaction.reply({
-                content: '### 🔒 Deploy a Server Template\nPick a template to preview it before deploying:',
+                content: '### 🔒 Deploy a Server Template\nPick a template to preview it before deploying:\n*Custom templates are marked with ✦*',
                 components: [new ActionRowBuilder().addComponents(selectMenu)],
                 flags: [MessageFlags.Ephemeral]
             });
@@ -53,8 +77,8 @@ module.exports = {
 
         // ── Select menu → show preview + confirm/cancel buttons ───────────────
         if (interaction.isStringSelectMenu() && interaction.customId === 'owner_template_select') {
-            const key = interaction.values[0];
-            const tpl = TEMPLATES[key];
+            const value = interaction.values[0];
+            const tpl   = resolveTemplate(interaction.guild.id, value);
 
             if (!tpl) {
                 return interaction.update({ content: '❌ Unknown template.', components: [] });
@@ -67,8 +91,8 @@ module.exports = {
             }).join('\n');
 
             const preview = [
-                `### ${tpl.emoji} ${tpl.label}`,
-                `> ${tpl.description}`,
+                `### ${tpl.emoji || '🌐'} ${tpl.label}`,
+                `> ${tpl.description || ''}`,
                 '',
                 `**Roles (${tpl.structure.roles.length})**`,
                 roleList,
@@ -80,7 +104,7 @@ module.exports = {
             ].join('\n');
 
             const confirmBtn = new ButtonBuilder()
-                .setCustomId(`owner_template_confirm:${key}`)
+                .setCustomId(`owner_template_confirm:${value}`)
                 .setLabel('Deploy Template')
                 .setStyle(ButtonStyle.Danger)
                 .setEmoji('🚀');
@@ -99,10 +123,7 @@ module.exports = {
 
         // ── Button: cancel ────────────────────────────────────────────────────
         if (interaction.isButton() && interaction.customId === 'owner_template_cancel') {
-            await interaction.update({
-                content: '❌ Template deployment cancelled.',
-                components: []
-            });
+            await interaction.update({ content: '❌ Template deployment cancelled.', components: [] });
             return;
         }
 
@@ -115,8 +136,9 @@ module.exports = {
                 });
             }
 
-            const key = interaction.customId.split(':')[1];
-            const tpl = TEMPLATES[key];
+            // Preserve colons in value (e.g. "c:my_template")
+            const value = interaction.customId.split(':').slice(1).join(':');
+            const tpl   = resolveTemplate(interaction.guild.id, value);
 
             if (!tpl) {
                 return interaction.update({ content: '❌ Unknown template.', components: [] });

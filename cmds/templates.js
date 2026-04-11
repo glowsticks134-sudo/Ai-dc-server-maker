@@ -1,6 +1,6 @@
 /**
  * cmds/templates.js
- * /templates → Public command to browse available server templates
+ * /templates → Public command to browse available server templates (built-in + custom)
  */
 
 const {
@@ -10,6 +10,14 @@ const {
 } = require('discord.js');
 
 const { TEMPLATES } = require('../data/templates');
+const { getGuildTemplates } = require('../data/customTemplates');
+
+function resolveTemplate(guildId, value) {
+    if (value.startsWith('c:')) {
+        return getGuildTemplates(guildId)[value.slice(2)] || null;
+    }
+    return TEMPLATES[value] || null;
+}
 
 module.exports = {
     data: {
@@ -21,12 +29,28 @@ module.exports = {
 
         // ── Slash command → show template select menu ─────────────────────────
         if (interaction.isChatInputCommand()) {
-            const options = Object.entries(TEMPLATES).map(([key, tpl]) => ({
+            const builtIn = Object.entries(TEMPLATES).map(([key, tpl]) => ({
                 label: tpl.label,
                 description: tpl.description,
                 value: key,
                 emoji: tpl.emoji
             }));
+
+            const custom = Object.entries(getGuildTemplates(interaction.guild.id)).map(([key, tpl]) => ({
+                label: `${tpl.label} ✦`,
+                description: tpl.description?.slice(0, 100) || 'Custom template',
+                value: `c:${key}`,
+                emoji: tpl.emoji || '🌐'
+            }));
+
+            const options = [...builtIn, ...custom];
+
+            if (options.length === 0) {
+                return interaction.reply({
+                    content: '❌ No templates available yet.',
+                    flags: [MessageFlags.Ephemeral]
+                });
+            }
 
             const selectMenu = new StringSelectMenuBuilder()
                 .setCustomId('pub_template_select')
@@ -34,7 +58,7 @@ module.exports = {
                 .addOptions(options);
 
             await interaction.reply({
-                content: '### 📋 Server Templates\nPick a template to see what it includes:',
+                content: '### 📋 Server Templates\nPick a template to see what it includes:\n*Custom templates are marked with ✦*',
                 components: [new ActionRowBuilder().addComponents(selectMenu)],
                 flags: [MessageFlags.Ephemeral]
             });
@@ -43,8 +67,8 @@ module.exports = {
 
         // ── Select menu → show read-only preview ──────────────────────────────
         if (interaction.isStringSelectMenu() && interaction.customId === 'pub_template_select') {
-            const key = interaction.values[0];
-            const tpl = TEMPLATES[key];
+            const value = interaction.values[0];
+            const tpl   = resolveTemplate(interaction.guild.id, value);
 
             if (!tpl) {
                 return interaction.update({ content: '❌ Unknown template.', components: [] });
@@ -57,8 +81,8 @@ module.exports = {
             }).join('\n');
 
             const preview = [
-                `### ${tpl.emoji} ${tpl.label}`,
-                `> ${tpl.description}`,
+                `### ${tpl.emoji || '🌐'} ${tpl.label}`,
+                `> ${tpl.description || ''}`,
                 '',
                 `**Roles (${tpl.structure.roles.length})**`,
                 roleList,
@@ -69,10 +93,7 @@ module.exports = {
                 '*To deploy this template, the server owner can use `/ownertemplates`.*'
             ].join('\n');
 
-            await interaction.update({
-                content: preview,
-                components: []
-            });
+            await interaction.update({ content: preview, components: [] });
         }
     }
 };
