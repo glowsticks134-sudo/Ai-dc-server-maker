@@ -99,7 +99,8 @@ const BUTTON_ROUTES = {
     import_cancel:         'import',
     ticket_open:           'setup',
     ticket_close:          'setup',
-    rr:                    'setup'
+    rr:                    'setup',
+    howto_page:            'howto'
 };
 
 // ── Events ────────────────────────────────────────────────────────────────────
