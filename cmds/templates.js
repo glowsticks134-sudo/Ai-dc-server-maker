@@ -6,8 +6,11 @@
 const {
     ActionRowBuilder,
     StringSelectMenuBuilder,
+    EmbedBuilder,
     MessageFlags
 } = require('discord.js');
+
+const VOID_COLOR = 0x6B48FF;
 
 const { TEMPLATES } = require('../data/templates');
 const { getGuildTemplates } = require('../data/customTemplates');
@@ -74,26 +77,24 @@ module.exports = {
                 return interaction.update({ content: '❌ Unknown template.', components: [] });
             }
 
-            const roleList = tpl.structure.roles.map(r => `• ${r.name}`).join('\n');
+            const roleList = tpl.structure.roles.map(r => `• ${r.name}`).join('\n') || 'None';
             const categoryList = tpl.structure.categories.map(c => {
-                const badge = c.staffOnly ? ' *(staff only)*' : c.readOnly ? ' *(read only)*' : '';
-                return `• ${c.name}${badge} — ${c.channels.length} channels`;
-            }).join('\n');
+                const badge = c.staffOnly ? ' 🔒' : c.readOnly ? ' 📖' : '';
+                return `• **${c.name}**${badge} — ${c.channels.length} ch`;
+            }).join('\n') || 'None';
 
-            const preview = [
-                `### ${tpl.emoji || '🌐'} ${tpl.label}`,
-                `> ${tpl.description || ''}`,
-                '',
-                `**Roles (${tpl.structure.roles.length})**`,
-                roleList,
-                '',
-                `**Categories (${tpl.structure.categories.length})**`,
-                categoryList,
-                '',
-                '*To deploy this template, the server owner can use `/ownertemplates`.*'
-            ].join('\n');
+            const embed = new EmbedBuilder()
+                .setTitle(`${tpl.emoji || '🌐'} ${tpl.label}`)
+                .setDescription(`> ${tpl.description || 'No description available.'}`)
+                .setColor(VOID_COLOR)
+                .addFields(
+                    { name: `👥 Roles (${tpl.structure.roles.length})`, value: roleList, inline: true },
+                    { name: `📁 Categories (${tpl.structure.categories.length})`, value: categoryList, inline: false }
+                )
+                .setFooter({ text: '⚡ Void Builder • Use /ownertemplates to deploy as server owner' })
+                .setTimestamp();
 
-            await interaction.update({ content: preview, components: [] });
+            await interaction.update({ embeds: [embed], components: [] });
         }
     }
 };

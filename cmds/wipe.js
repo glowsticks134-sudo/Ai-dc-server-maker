@@ -2,11 +2,13 @@ const {
     ActionRowBuilder,
     ButtonBuilder,
     ButtonStyle,
+    EmbedBuilder,
     MessageFlags
 } = require('discord.js');
 const { isAuthorised } = require('../data/owners');
 
-const VOID_COLOR = 0x6B48FF;
+const VOID_COLOR  = 0x6B48FF;
+const DANGER_COLOR = 0xED4245;
 
 module.exports = {
     data: {
@@ -21,10 +23,22 @@ module.exports = {
             }
 
             const confirm = new ButtonBuilder().setCustomId('wipe_confirm').setLabel('Wipe Everything').setStyle(ButtonStyle.Danger).setEmoji('🌌');
-            const cancel  = new ButtonBuilder().setCustomId('wipe_cancel').setLabel('Cancel').setStyle(ButtonStyle.Secondary);
+            const cancel  = new ButtonBuilder().setCustomId('wipe_cancel').setLabel('Cancel').setStyle(ButtonStyle.Secondary).setEmoji('✖️');
+
+            const embed = new EmbedBuilder()
+                .setTitle('🌌 Void Wipe — Danger Zone')
+                .setDescription(
+                    '**This action will permanently delete all channels and roles in this server.**\n\n' +
+                    'There is no undo. The server will be left completely empty.\n\n' +
+                    '> 💡 Tip: Use `/deploy` afterwards to rebuild your server with AI in seconds.'
+                )
+                .setColor(DANGER_COLOR)
+                .addFields({ name: '⚠️ What gets deleted', value: '• All text and voice channels\n• All categories\n• All custom roles', inline: false })
+                .setFooter({ text: '⚡ Void Builder • This cannot be reversed' })
+                .setTimestamp();
 
             return interaction.reply({
-                content: '## 🌌 Void Wipe\n⚠️ This will **permanently delete all channels and roles** in this server.\nThere is no undo. Are you absolutely sure?',
+                embeds: [embed],
                 components: [new ActionRowBuilder().addComponents(confirm, cancel)],
                 flags: [MessageFlags.Ephemeral]
             });
