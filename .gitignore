@@ -31,3 +31,6 @@ desktop.ini
 .cache/
 tmp/
 *.zip
+
+# ── Runtime data ──────────────────────────────────────────────
+data/owners.json

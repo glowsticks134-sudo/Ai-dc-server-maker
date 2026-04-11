@@ -13,6 +13,7 @@ const {
 
 const { generateServerStructure } = require('../ai-logic');
 const { buildServer } = require('../builder');
+const { isAuthorised } = require('../data/owners');
 
 const SEPARATOR_PRESETS = {
     'default': '-',
@@ -47,9 +48,9 @@ module.exports = {
 
         // ── Slash command → show modal ───────────────────────────────────────
         if (interaction.isChatInputCommand()) {
-            if (interaction.user.id !== interaction.guild.ownerId) {
+            if (!isAuthorised(interaction.guild.id, interaction.user.id, interaction.guild.ownerId)) {
                 return interaction.reply({
-                    content: '❌ Only the server owner can use this command.',
+                    content: '❌ Only the server owner or a co-owner can use this command.',
                     flags: [MessageFlags.Ephemeral]
                 });
             }
@@ -86,9 +87,9 @@ module.exports = {
 
         // ── Modal submit ─────────────────────────────────────────────────────
         if (interaction.isModalSubmit() && interaction.customId === 'deploy_modal') {
-            if (interaction.user.id !== interaction.guild.ownerId) {
+            if (!isAuthorised(interaction.guild.id, interaction.user.id, interaction.guild.ownerId)) {
                 return interaction.reply({
-                    content: '❌ Only the server owner can use this command.',
+                    content: '❌ Only the server owner or a co-owner can use this command.',
                     flags: [MessageFlags.Ephemeral]
                 });
             }

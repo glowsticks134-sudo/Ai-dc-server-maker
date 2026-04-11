@@ -32,21 +32,26 @@ for (const file of cmdFiles) {
     console.log(`📦 Loaded command: /${cmd.data.name}`);
 }
 
-// ── Register slash commands on Discord ────────────────────────────────────────
-async function registerCommands() {
-    const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
-    const commandBodies = [...client.commands.values()].map(cmd => cmd.data);
+// ── Register slash commands ───────────────────────────────────────────────────
+const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
+const commandBodies = [...client.commands.values()].map(cmd => cmd.data);
 
+async function registerCommandsInGuild(guildId) {
     try {
-        const guilds = client.guilds.cache;
-        console.log(`⏳ Registering ${commandBodies.length} command(s) on ${guilds.size} server(s)...`);
-        for (const [guildId] of guilds) {
-            await rest.put(Routes.applicationGuildCommands(CLIENT_ID, guildId), { body: commandBodies });
-        }
-        console.log('🚀 All commands registered successfully!');
+        await rest.put(Routes.applicationGuildCommands(CLIENT_ID, guildId), { body: commandBodies });
+        console.log(`✅ Commands registered in guild ${guildId}`);
     } catch (error) {
-        console.error('❌ Error registering commands:', error.message);
+        console.error(`❌ Failed to register commands in guild ${guildId}:`, error.message);
     }
+}
+
+async function registerAllGuilds() {
+    const guilds = client.guilds.cache;
+    console.log(`⏳ Registering ${commandBodies.length} command(s) on ${guilds.size} server(s)...`);
+    for (const [guildId] of guilds) {
+        await registerCommandsInGuild(guildId);
+    }
+    console.log('🚀 All commands registered successfully!');
 }
 
 // ── Route table: customId → command name ──────────────────────────────────────
@@ -63,7 +68,13 @@ const SELECT_ROUTES = {
 // ── Events ────────────────────────────────────────────────────────────────────
 client.once('ready', async () => {
     console.log(`\n✅ Bot connected: ${client.user.tag}`);
-    await registerCommands();
+    await registerAllGuilds();
+});
+
+// Register commands whenever the bot joins a new server
+client.on('guildCreate', async guild => {
+    console.log(`📥 Joined new server: ${guild.name} (${guild.id})`);
+    await registerCommandsInGuild(guild.id);
 });
 
 client.on('interactionCreate', async interaction => {
