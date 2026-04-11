@@ -84,8 +84,8 @@ Available permissions: Administrator, ManageGuild, ManageChannels, ManageRoles, 
 
 Respond ONLY with valid JSON, no backticks, no text before or after:
 {
-  "serverName": "Server name in detected language",
-  "welcomeMessage": "Warm and detailed welcome message in detected language",
+  "serverName": "Server name in English",
+  "welcomeMessage": "Warm and detailed welcome message in English",
   "roles": [
     { "name": "👑 Owner", "color": "#F1C40F", "permissions": ["Administrator"], "position": 10 },
     { "name": "⚙️ Admin", "color": "#E74C3C", "permissions": ["Administrator"], "position": 9 },
@@ -134,8 +134,9 @@ Respond ONLY with valid JSON, no backticks, no text before or after:
         try {
             console.log(`🤖 Trying model: ${model}`);
             let text = await callGroq(model, prompt);
-            text = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
-            const structure = JSON.parse(text);
+            const jsonMatch = text.match(/\{[\s\S]*\}/);
+            if (!jsonMatch) throw new Error('No JSON object found in response');
+            const structure = JSON.parse(jsonMatch[0]);
             console.log(`✅ Success with: ${model}`);
             return structure;
         } catch (err) {

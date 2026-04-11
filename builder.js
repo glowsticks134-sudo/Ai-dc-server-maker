@@ -36,7 +36,7 @@ async function buildServer(guild, structure) {
 
     // Create roles (sorted by position descending)
     const roleMap = new Map();
-    const sortedRoles = [...structure.roles].sort((a, b) => (b.position || 0) - (a.position || 0));
+    const sortedRoles = [...(structure.roles || [])].sort((a, b) => (b.position || 0) - (a.position || 0));
 
     for (const r of sortedRoles) {
         try {
@@ -67,7 +67,7 @@ async function buildServer(guild, structure) {
 
     let firstTextChannel = null;
 
-    for (const cat of structure.categories) {
+    for (const cat of (structure.categories || [])) {
         try {
             const isStaffOnly = cat.staffOnly === true;
             const isCatReadOnly = cat.readOnly === true;
