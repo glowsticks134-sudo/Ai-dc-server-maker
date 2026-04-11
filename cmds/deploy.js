@@ -1,6 +1,6 @@
 /**
  * cmds/deploy.js
- * Handles the /deploy command with AI preview mode
+ * Handles the /deploy command with separator picker + AI preview mode
  */
 
 const {
@@ -10,6 +10,7 @@ const {
     ActionRowBuilder,
     ButtonBuilder,
     ButtonStyle,
+    StringSelectMenuBuilder,
     EmbedBuilder,
     MessageFlags
 } = require('discord.js');
@@ -20,17 +21,21 @@ const { isAuthorised } = require('../data/owners');
 
 const VOID_COLOR = 0x6B48FF;
 
-const SEPARATOR_PRESETS = {
-    'default': '-', 'dash': '-', 'bar': '┃', 'pipe': '│', 'dot': '•',
-    'bullet': '•', 'arrow': '›', 'chevron': '⟩', 'wave': '〜',
-    'star': '✦', 'cross': '✖', 'diamond': '◈', 'heart': '♡'
-};
+const SEPARATOR_OPTIONS = [
+    { key: 'dash',    char: '-',  label: 'Dash',    example: '📜-rules'    },
+    { key: 'bar',     char: '┃',  label: 'Bar',     example: '📜┃rules'    },
+    { key: 'pipe',    char: '│',  label: 'Pipe',    example: '📜│rules'    },
+    { key: 'dot',     char: '•',  label: 'Dot',     example: '📜•rules'    },
+    { key: 'arrow',   char: '›',  label: 'Arrow',   example: '📜›rules'    },
+    { key: 'wave',    char: '〜', label: 'Wave',    example: '📜〜rules'   },
+    { key: 'star',    char: '✦',  label: 'Star',    example: '📜✦rules'    },
+    { key: 'diamond', char: '◈',  label: 'Diamond', example: '📜◈rules'    },
+    { key: 'heart',   char: '♡',  label: 'Heart',   example: '📜♡rules'    },
+    { key: 'none',    char: '',   label: 'None',    example: '📜rules'     },
+];
 
-function resolveSeparator(input) {
-    if (!input || !input.trim()) return '-';
-    const lower = input.trim().toLowerCase();
-    if (SEPARATOR_PRESETS[lower]) return SEPARATOR_PRESETS[lower];
-    return input.trim()[0];
+function getSeparator(key) {
+    return SEPARATOR_OPTIONS.find(o => o.key === key)?.char ?? '-';
 }
 
 // In-memory store for pending builds (keyed by guildId-userId)
@@ -71,40 +76,65 @@ module.exports = {
 
     async execute(interaction) {
 
-        // ── Slash command → show modal ────────────────────────────────────────
+        // ── Step 1: Slash command → show separator picker ─────────────────────
         if (interaction.isChatInputCommand()) {
             if (!isAuthorised(interaction.guild.id, interaction.user.id, interaction.guild.ownerId)) {
                 return interaction.reply({ content: '❌ Only the server owner or a co-owner can use this command.', flags: [MessageFlags.Ephemeral] });
             }
 
-            const modal = new ModalBuilder().setCustomId('deploy_modal').setTitle('🌌 Void Builder — Create a Server');
+            const selectMenu = new StringSelectMenuBuilder()
+                .setCustomId('deploy_sep_select')
+                .setPlaceholder('Choose a channel separator style…')
+                .addOptions(SEPARATOR_OPTIONS.map(o => ({
+                    label: `${o.label}  —  ${o.example}`,
+                    value: o.key,
+                    default: o.key === 'dash'
+                })));
+
+            return interaction.reply({
+                content: '### 🌌 Void Builder — Step 1 of 2\nChoose how channel names will look:',
+                components: [new ActionRowBuilder().addComponents(selectMenu)],
+                flags: [MessageFlags.Ephemeral]
+            });
+        }
+
+        // ── Step 2: Separator chosen → open description modal ────────────────
+        if (interaction.isStringSelectMenu() && interaction.customId === 'deploy_sep_select') {
+            const key = interaction.values[0];
+            const sep = getSeparator(key);
+
+            const modal = new ModalBuilder()
+                .setCustomId(`deploy_modal:${key}`)
+                .setTitle('🌌 Void Builder — Step 2 of 2');
+
             modal.addComponents(
                 new ActionRowBuilder().addComponents(
-                    new TextInputBuilder().setCustomId('description').setLabel('Describe your server')
+                    new TextInputBuilder()
+                        .setCustomId('description')
+                        .setLabel('Describe your server')
                         .setPlaceholder('e.g. A Minecraft prison server with miner, guard and warden ranks…')
-                        .setStyle(TextInputStyle.Paragraph).setMinLength(10).setMaxLength(4000).setRequired(true)
-                ),
-                new ActionRowBuilder().addComponents(
-                    new TextInputBuilder().setCustomId('separator').setLabel('Channel separator (optional)')
-                        .setPlaceholder('default(-) bar(┃) pipe(│) dot(•) arrow(›) star(✦) diamond(◈) …or any character')
-                        .setStyle(TextInputStyle.Short).setRequired(false).setMaxLength(20)
+                        .setStyle(TextInputStyle.Paragraph)
+                        .setMinLength(10)
+                        .setMaxLength(4000)
+                        .setRequired(true)
                 )
             );
+
             await interaction.showModal(modal);
             return;
         }
 
-        // ── Modal submit → generate + show preview ────────────────────────────
-        if (interaction.isModalSubmit() && interaction.customId === 'deploy_modal') {
+        // ── Step 3: Modal submit → generate + show preview ───────────────────
+        if (interaction.isModalSubmit() && interaction.customId.startsWith('deploy_modal:')) {
             if (!isAuthorised(interaction.guild.id, interaction.user.id, interaction.guild.ownerId)) {
                 return interaction.reply({ content: '❌ Only the server owner or a co-owner can use this command.', flags: [MessageFlags.Ephemeral] });
             }
 
-            const description    = interaction.fields.getTextInputValue('description');
-            const separatorInput = interaction.fields.getTextInputValue('separator') || '';
-            const separator      = resolveSeparator(separatorInput);
+            const sepKey     = interaction.customId.split(':')[1];
+            const separator  = getSeparator(sepKey);
+            const description = interaction.fields.getTextInputValue('description');
 
-            await interaction.reply({ content: '🌌 **Initializing Void Construction…** Generating your server structure…', flags: [MessageFlags.Ephemeral] });
+            await interaction.reply({ content: `🌌 **Initializing Void Construction…** Generating your server structure with **${SEPARATOR_OPTIONS.find(o => o.key === sepKey)?.example ?? '📜-rules'}** style channels…`, flags: [MessageFlags.Ephemeral] });
 
             try {
                 console.log(`\n📥 Deploy request: "${description}" [sep: "${separator}"]`);
@@ -159,7 +189,6 @@ module.exports = {
             try {
                 const structure = await generateServerStructure(pending.description, pending.separator);
                 pendingBuilds.set(key, { ...pending, structure });
-
                 await interaction.editReply({ content: '### 🌌 Server Preview\nReview your generated structure below, then choose an action:', embeds: [buildPreviewEmbed(structure)], components: [previewButtons()] });
             } catch (error) {
                 await interaction.editReply({ content: `❌ Regeneration failed: ${error.message}` });

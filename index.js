@@ -71,6 +71,7 @@ const MODAL_ROUTES = {
 };
 
 const SELECT_ROUTES = {
+    deploy_sep_select:    'deploy',
     prompt_select:        'prompt',
     pub_template_select:  'templates',
     owner_template_select:'ownertemplates'
@@ -107,7 +108,8 @@ client.on('interactionCreate', async interaction => {
     if (interaction.isChatInputCommand()) {
         cmdName = interaction.commandName;
     } else if (interaction.isModalSubmit()) {
-        cmdName = MODAL_ROUTES[interaction.customId];
+        const baseModalId = interaction.customId.split(':')[0];
+        cmdName = MODAL_ROUTES[interaction.customId] || MODAL_ROUTES[baseModalId];
     } else if (interaction.isStringSelectMenu()) {
         cmdName = SELECT_ROUTES[interaction.customId];
     } else if (interaction.isButton()) {
