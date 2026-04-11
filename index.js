@@ -11,6 +11,7 @@ require('dotenv').config();
 const { Client, GatewayIntentBits, REST, Routes, Collection } = require('discord.js');
 const fs   = require('fs');
 const path = require('path');
+const { createServer } = require('./server');
 
 const { DISCORD_TOKEN, CLIENT_ID, GROQ_API_KEY } = process.env;
 
@@ -108,6 +109,7 @@ client.once('ready', async () => {
     console.log(`\n✅ Bot connected: ${client.user.tag}`);
     await clearGlobalCommands();
     await registerAllGuilds();
+    createServer(client);
 });
 
 // Register commands whenever the bot joins a new server
