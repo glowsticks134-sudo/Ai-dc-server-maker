@@ -12,7 +12,6 @@ const {
 } = require('discord.js');
 
 const { buildServer } = require('../builder');
-const { isAuthorised } = require('../data/owners');
 const { TEMPLATES } = require('../data/templates');
 
 module.exports = {
@@ -25,9 +24,9 @@ module.exports = {
 
         // ── Slash command → show template select menu ─────────────────────────
         if (interaction.isChatInputCommand()) {
-            if (!isAuthorised(interaction.guild.id, interaction.user.id, interaction.guild.ownerId)) {
+            if (interaction.user.id !== interaction.guild.ownerId) {
                 return interaction.reply({
-                    content: '❌ Only the server owner or a co-owner can use this command.',
+                    content: '❌ Only the server owner can use this command.',
                     flags: [MessageFlags.Ephemeral]
                 });
             }
@@ -109,9 +108,9 @@ module.exports = {
 
         // ── Button: confirm deploy ────────────────────────────────────────────
         if (interaction.isButton() && interaction.customId.startsWith('template_confirm:')) {
-            if (!isAuthorised(interaction.guild.id, interaction.user.id, interaction.guild.ownerId)) {
+            if (interaction.user.id !== interaction.guild.ownerId) {
                 return interaction.update({
-                    content: '❌ Only the server owner or a co-owner can use this command.',
+                    content: '❌ Only the server owner can use this command.',
                     components: []
                 });
             }
