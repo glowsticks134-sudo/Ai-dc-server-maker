@@ -1,0 +1,428 @@
+{
+  "1489667354513244231": {
+    "free_members": {
+      "label": "free members",
+      "emoji": "🌐",
+      "description": "Custom template: free members",
+      "structure": {
+        "serverName": "MemberTy ©",
+        "welcomeMessage": "Welcome to MemberTy ©!",
+        "roles": [
+          {
+            "name": "Support",
+            "color": "#5865f2",
+            "permissions": [
+              "SendMessages",
+              "ReadMessageHistory",
+              "ViewChannel"
+            ],
+            "position": 23
+          },
+          {
+            "name": "Venom X",
+            "color": "#99AAB5",
+            "permissions": [],
+            "position": 22
+          },
+          {
+            "name": "Automod Bypass",
+            "color": "#e25aff",
+            "permissions": [],
+            "position": 21
+          },
+          {
+            "name": "muted",
+            "color": "#f4424b",
+            "permissions": [],
+            "position": 20
+          },
+          {
+            "name": "Not legit role",
+            "color": "#99AAB5",
+            "permissions": [],
+            "position": 19
+          },
+          {
+            "name": "Verified",
+            "color": "#2ecc71",
+            "permissions": [
+              "SendMessages",
+              "ReadMessageHistory",
+              "ViewChannel"
+            ],
+            "position": 18
+          },
+          {
+            "name": "Unverified",
+            "color": "#99AAB5",
+            "permissions": [],
+            "position": 17
+          },
+          {
+            "name": "🥉 • Bronze",
+            "color": "#593131",
+            "permissions": [
+              "SendMessages",
+              "ViewChannel"
+            ],
+            "position": 16
+          },
+          {
+            "name": "Members Provider",
+            "color": "#e91e63",
+            "permissions": [],
+            "position": 15
+          },
+          {
+            "name": "🥈 • Silver",
+            "color": "#535353",
+            "permissions": [],
+            "position": 14
+          },
+          {
+            "name": "🥇 • Gold",
+            "color": "#f1c40f",
+            "permissions": [],
+            "position": 13
+          },
+          {
+            "name": "💠 • Premium",
+            "color": "#3498db",
+            "permissions": [],
+            "position": 12
+          },
+          {
+            "name": "💎 • Diamond",
+            "color": "#00e3ff",
+            "permissions": [],
+            "position": 11
+          },
+          {
+            "name": "🟩 • Emerald",
+            "color": "#0ef700",
+            "permissions": [],
+            "position": 10
+          },
+          {
+            "name": "Buyers 🤑",
+            "color": "#71368a",
+            "permissions": [
+              "SendMessages",
+              "ReadMessageHistory",
+              "ViewChannel"
+            ],
+            "position": 9
+          },
+          {
+            "name": "help",
+            "color": "#99AAB5",
+            "permissions": [
+              "Administrator"
+            ],
+            "position": 8
+          },
+          {
+            "name": "Moderator",
+            "color": "#2ecc71",
+            "permissions": [
+              "Administrator",
+              "KickMembers",
+              "SendMessages",
+              "ViewChannel"
+            ],
+            "position": 7
+          },
+          {
+            "name": "Admin",
+            "color": "#f1c40f",
+            "permissions": [
+              "Administrator",
+              "ManageGuild",
+              "ManageChannels",
+              "ManageRoles",
+              "KickMembers",
+              "BanMembers",
+              "SendMessages",
+              "ReadMessageHistory",
+              "ViewChannel"
+            ],
+            "position": 6
+          },
+          {
+            "name": "Bots",
+            "color": "#70ff7f",
+            "permissions": [
+              "Administrator",
+              "ManageGuild",
+              "ManageChannels",
+              "ManageRoles",
+              "KickMembers",
+              "BanMembers",
+              "SendMessages",
+              "ReadMessageHistory",
+              "ViewChannel"
+            ],
+            "position": 5
+          },
+          {
+            "name": "Co Owner",
+            "color": "#3498db",
+            "permissions": [
+              "Administrator",
+              "ManageGuild",
+              "ManageChannels",
+              "ManageRoles",
+              "KickMembers",
+              "BanMembers",
+              "SendMessages",
+              "ReadMessageHistory",
+              "ViewChannel"
+            ],
+            "position": 4
+          },
+          {
+            "name": "Members\"Ty\"",
+            "color": "#e67e22",
+            "permissions": [
+              "SendMessages",
+              "ViewChannel"
+            ],
+            "position": 3
+          },
+          {
+            "name": "Bot Restockers",
+            "color": "#ad1457",
+            "permissions": [
+              "Administrator"
+            ],
+            "position": 2
+          },
+          {
+            "name": "🤑• Founders",
+            "color": "#b7f4ff",
+            "permissions": [
+              "Administrator",
+              "ManageGuild",
+              "ManageChannels",
+              "ManageRoles",
+              "KickMembers",
+              "BanMembers",
+              "SendMessages",
+              "ReadMessageHistory",
+              "ViewChannel"
+            ],
+            "position": 1
+          }
+        ],
+        "categories": [
+          {
+            "name": "💬 GENERAL",
+            "staffOnly": false,
+            "readOnly": false,
+            "channels": [
+              {
+                "name": "rules",
+                "type": "GUILD_TEXT",
+                "readOnly": true
+              },
+              {
+                "name": "moderator-only",
+                "type": "GUILD_TEXT",
+                "readOnly": false
+              },
+              {
+                "name": "raidprotect-logs",
+                "type": "GUILD_TEXT",
+                "readOnly": true
+              }
+            ]
+          },
+          {
+            "name": "📔 • Entrence",
+            "staffOnly": false,
+            "readOnly": false,
+            "channels": [
+              {
+                "name": "✶『🔗』server-link",
+                "type": "GUILD_TEXT",
+                "readOnly": true
+              },
+              {
+                "name": "✶『👋』welcome",
+                "type": "GUILD_TEXT",
+                "readOnly": true
+              },
+              {
+                "name": "✶『✅』legit-check",
+                "type": "GUILD_TEXT",
+                "readOnly": true
+              }
+            ]
+          },
+          {
+            "name": "🎉 • Special",
+            "staffOnly": false,
+            "readOnly": false,
+            "channels": [
+              {
+                "name": "✶『🎁』event",
+                "type": "GUILD_TEXT",
+                "readOnly": false
+              },
+              {
+                "name": "✶『🎁』event-leaderboard",
+                "type": "GUILD_TEXT",
+                "readOnly": true
+              },
+              {
+                "name": "✶『🚀』booster",
+                "type": "GUILD_TEXT",
+                "readOnly": true
+              },
+              {
+                "name": "✶『🎫』ticket",
+                "type": "GUILD_TEXT",
+                "readOnly": true
+              }
+            ]
+          },
+          {
+            "name": "💬 • General",
+            "staffOnly": false,
+            "readOnly": false,
+            "channels": [
+              {
+                "name": "✶『🔊』general-voice-channel",
+                "type": "GUILD_VOICE",
+                "readOnly": false
+              },
+              {
+                "name": "✶『🎵』music",
+                "type": "GUILD_VOICE",
+                "readOnly": false
+              },
+              {
+                "name": "✶『🗨️』general-chat",
+                "type": "GUILD_TEXT",
+                "readOnly": false
+              },
+              {
+                "name": "✶『🤖』bot-command",
+                "type": "GUILD_TEXT",
+                "readOnly": false
+              },
+              {
+                "name": "✶『📈』chat-level",
+                "type": "GUILD_TEXT",
+                "readOnly": false
+              },
+              {
+                "name": "✶『📷』media-only",
+                "type": "GUILD_TEXT",
+                "readOnly": false
+              }
+            ]
+          },
+          {
+            "name": "📈 • Stock",
+            "staffOnly": false,
+            "readOnly": false,
+            "channels": [
+              {
+                "name": "✶『🚀』restock",
+                "type": "GUILD_TEXT",
+                "readOnly": true
+              },
+              {
+                "name": "✶『🚀』stock",
+                "type": "GUILD_TEXT",
+                "readOnly": true
+              }
+            ]
+          },
+          {
+            "name": "🤖 • Members",
+            "staffOnly": false,
+            "readOnly": false,
+            "channels": [
+              {
+                "name": "✶『📰』how-to-use",
+                "type": "GUILD_TEXT",
+                "readOnly": true
+              },
+              {
+                "name": "✶『➕』add-bot",
+                "type": "GUILD_TEXT",
+                "readOnly": true
+              },
+              {
+                "name": "✶『📜』plans",
+                "type": "GUILD_TEXT",
+                "readOnly": true
+              },
+              {
+                "name": "✶『💳』roles",
+                "type": "GUILD_TEXT",
+                "readOnly": true
+              },
+              {
+                "name": "✶『🎁』invite-reward",
+                "type": "GUILD_TEXT",
+                "readOnly": false
+              },
+              {
+                "name": "✶『✅』authorize-here",
+                "type": "GUILD_TEXT",
+                "readOnly": false
+              },
+              {
+                "name": "✶『✨』farm-here",
+                "type": "GUILD_TEXT",
+                "readOnly": false
+              },
+              {
+                "name": "✶『✨』farm-vouch",
+                "type": "GUILD_TEXT",
+                "readOnly": false
+              },
+              {
+                "name": "✶『🥉』free-bronze",
+                "type": "GUILD_TEXT",
+                "readOnly": true
+              },
+              {
+                "name": "✶『🤖』private-bot",
+                "type": "GUILD_TEXT",
+                "readOnly": true
+              }
+            ]
+          },
+          {
+            "name": "👾 • Others",
+            "staffOnly": false,
+            "readOnly": false,
+            "channels": [
+              {
+                "name": "✶『😀』vouches",
+                "type": "GUILD_TEXT",
+                "readOnly": false
+              }
+            ]
+          },
+          {
+            "name": "Tickets",
+            "staffOnly": false,
+            "readOnly": false,
+            "channels": [
+              {
+                "name": "ticket-alokmajithia",
+                "type": "GUILD_TEXT",
+                "readOnly": false
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
