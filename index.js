@@ -45,6 +45,15 @@ async function registerCommandsInGuild(guildId) {
     }
 }
 
+async function clearGlobalCommands() {
+    try {
+        await rest.put(Routes.applicationCommands(CLIENT_ID), { body: [] });
+        console.log('🧹 Global commands cleared.');
+    } catch (error) {
+        console.error('❌ Failed to clear global commands:', error.message);
+    }
+}
+
 async function registerAllGuilds() {
     const guilds = client.guilds.cache;
     console.log(`⏳ Registering ${commandBodies.length} command(s) on ${guilds.size} server(s)...`);
@@ -68,6 +77,7 @@ const SELECT_ROUTES = {
 // ── Events ────────────────────────────────────────────────────────────────────
 client.once('ready', async () => {
     console.log(`\n✅ Bot connected: ${client.user.tag}`);
+    await clearGlobalCommands();
     await registerAllGuilds();
 });
 
