@@ -14,6 +14,29 @@ const {
 const { generateServerStructure } = require('../ai-logic');
 const { buildServer } = require('../builder');
 
+const SEPARATOR_PRESETS = {
+    'default': '-',
+    'dash':    '-',
+    'bar':     '┃',
+    'pipe':    '│',
+    'dot':     '•',
+    'bullet':  '•',
+    'arrow':   '›',
+    'chevron': '⟩',
+    'wave':    '〜',
+    'star':    '✦',
+    'cross':   '✖',
+    'diamond': '◈',
+    'heart':   '♡',
+};
+
+function resolveSeparator(input) {
+    if (!input || !input.trim()) return '-';
+    const lower = input.trim().toLowerCase();
+    if (SEPARATOR_PRESETS[lower]) return SEPARATOR_PRESETS[lower];
+    return input.trim()[0];
+}
+
 module.exports = {
     data: {
         name: 'deploy',
@@ -38,6 +61,15 @@ module.exports = {
                         .setMinLength(10)
                         .setMaxLength(4000)
                         .setRequired(true)
+                ),
+                new ActionRowBuilder().addComponents(
+                    new TextInputBuilder()
+                        .setCustomId('separator')
+                        .setLabel('Channel separator (optional)')
+                        .setPlaceholder('default(-) bar(┃) pipe(│) dot(•) arrow(›) star(✦) diamond(◈) …or any character')
+                        .setStyle(TextInputStyle.Short)
+                        .setRequired(false)
+                        .setMaxLength(20)
                 )
             );
 
@@ -48,22 +80,24 @@ module.exports = {
         // ── Modal submit ─────────────────────────────────────────────────────
         if (interaction.isModalSubmit() && interaction.customId === 'deploy_modal') {
             const description = interaction.fields.getTextInputValue('description');
+            const separatorInput = interaction.fields.getTextInputValue('separator') || '';
+            const separator = resolveSeparator(separatorInput);
             const guild = interaction.guild;
 
             await interaction.reply({
-                content: '🧠 AI is generating your server structure... The server will be rebuilt, don\'t worry if you lose connection!',
+                content: `🧠 AI is generating your server structure... The server will be rebuilt, don't worry if you lose connection!\n> Separator style: **${separator}**`,
                 flags: [MessageFlags.Ephemeral]
             });
 
             try {
-                console.log(`\n📥 New deploy request: "${description}"`);
-                const structure = await generateServerStructure(description);
+                console.log(`\n📥 New deploy request: "${description}" [separator: "${separator}"]`);
+                const structure = await generateServerStructure(description, separator);
                 console.log(`📐 Structure received:`, JSON.stringify(structure, null, 2));
                 await buildServer(guild, structure);
 
                 try {
                     await interaction.followUp({
-                        content: `✨ **"${structure.serverName}"** deployed! ${structure.roles.length} roles and ${structure.categories.length} categories created.`,
+                        content: `✨ **"${structure.serverName}"** deployed! ${(structure.roles || []).length} roles and ${(structure.categories || []).length} categories created.`,
                         flags: [MessageFlags.Ephemeral]
                     });
                 } catch {

@@ -36,7 +36,7 @@ async function callGroq(model, prompt) {
     return text;
 }
 
-async function generateServerStructure(userRequest) {
+async function generateServerStructure(userRequest, separator = '-') {
     if (!process.env.GROQ_API_KEY) {
         throw new Error('GROQ_API_KEY is missing from your .env file');
     }
@@ -52,9 +52,10 @@ CRITICAL LANGUAGE RULE:
 
 MANDATORY RULES:
 
-1. EMOJIS:
-   - Every category name MUST start with a relevant emoji (e.g. "📋 INFORMATION", "📋 INFORMATIONS")
-   - Every channel name MUST start with a relevant emoji followed by a dash (e.g. "📜-rules", "📜-règles", "💬-general")
+1. EMOJIS AND SEPARATORS:
+   - Every category name MUST start with a relevant emoji, then a space, then the name in ALL CAPS (e.g. "📋 INFORMATION", "🚪 WELCOME")
+   - Every channel name MUST start with a relevant emoji, then the separator character "${separator}", then the name in lowercase (e.g. "📜${separator}rules", "💬${separator}general", "📣${separator}announcements")
+   - The separator between emoji and channel name is always: ${separator}
 
 2. ROLE HIERARCHY (from highest to lowest, in this order):
    - 1 Owner role (Administrator)
@@ -99,10 +100,10 @@ Respond ONLY with valid JSON, no backticks, no text before or after:
       "staffOnly": false,
       "readOnly": true,
       "channels": [
-        { "name": "📜-rules", "type": "GUILD_TEXT", "readOnly": true },
-        { "name": "📣-announcements", "type": "GUILD_TEXT", "readOnly": true },
-        { "name": "🎭-roles", "type": "GUILD_TEXT", "readOnly": true },
-        { "name": "❓-faq", "type": "GUILD_TEXT", "readOnly": true }
+        { "name": "📜${separator}rules", "type": "GUILD_TEXT", "readOnly": true },
+        { "name": "📣${separator}announcements", "type": "GUILD_TEXT", "readOnly": true },
+        { "name": "🎭${separator}roles", "type": "GUILD_TEXT", "readOnly": true },
+        { "name": "❓${separator}faq", "type": "GUILD_TEXT", "readOnly": true }
       ]
     },
     {
@@ -110,9 +111,9 @@ Respond ONLY with valid JSON, no backticks, no text before or after:
       "staffOnly": false,
       "readOnly": false,
       "channels": [
-        { "name": "👋-welcome", "type": "GUILD_TEXT", "readOnly": true },
-        { "name": "📝-introductions", "type": "GUILD_TEXT", "readOnly": false },
-        { "name": "✅-verification", "type": "GUILD_TEXT", "readOnly": false }
+        { "name": "👋${separator}welcome", "type": "GUILD_TEXT", "readOnly": true },
+        { "name": "📝${separator}introductions", "type": "GUILD_TEXT", "readOnly": false },
+        { "name": "✅${separator}verification", "type": "GUILD_TEXT", "readOnly": false }
       ]
     },
     {
@@ -120,9 +121,9 @@ Respond ONLY with valid JSON, no backticks, no text before or after:
       "staffOnly": true,
       "readOnly": false,
       "channels": [
-        { "name": "📋-logs", "type": "GUILD_TEXT", "readOnly": false },
-        { "name": "💬-staff-chat", "type": "GUILD_TEXT", "readOnly": false },
-        { "name": "🚨-reports", "type": "GUILD_TEXT", "readOnly": false }
+        { "name": "📋${separator}logs", "type": "GUILD_TEXT", "readOnly": false },
+        { "name": "💬${separator}staff-chat", "type": "GUILD_TEXT", "readOnly": false },
+        { "name": "🚨${separator}reports", "type": "GUILD_TEXT", "readOnly": false }
       ]
     }
   ]
