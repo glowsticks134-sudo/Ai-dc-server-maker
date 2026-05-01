@@ -1,11 +1,11 @@
 /**
  * cmds/deploy.js
- * /deploy — Personality presets + AI generation + Gamified progress + Smart add-on suggestions
+ * /deploy — AI generation + Gamified progress + Smart add-on suggestions
  *
  * Flow:
  *   1. /deploy           → separator picker
- *   2. sep_select        → personality picker
- *   3. personality pick  → description modal
+ *   2. sep_select        → Keep Roles? (yes / no)
+ *   3. keeproles pick    → description modal
  *   4. modal submit      → AI generation → preview embed + suggestion toggles
  *   5. suggestion_toggle → toggle add-on on/off
  *   6. preview_build     → gamified progress bar build
@@ -44,14 +44,6 @@ const SEPARATOR_OPTIONS = [
     { key: 'none',    char: '',   label: 'None',    example: '📜rules'     },
 ];
 
-const PERSONALITIES = {
-    toxic:        { name: 'Toxic',        emoji: '😈', color: 0x8B0000, desc: 'Dark, edgy & intimidating vibes'     },
-    chill:        { name: 'Chill',        emoji: '🌿', color: 0x2d6a4f, desc: 'Relaxed, cozy & friendly atmosphere' },
-    professional: { name: 'Professional', emoji: '💼', color: 0x1a3a5c, desc: 'Formal, clean & corporate style'     },
-    aesthetic:    { name: 'Aesthetic',    emoji: '✨', color: 0x7b2d8b, desc: 'Dreamy, poetic & artistic look'      },
-    void:         { name: 'Galaxy/Void',  emoji: '🌌', color: 0x6B48FF, desc: 'Cosmic, mysterious & epic energy'   },
-};
-
 const ADDON_SUGGESTIONS = [
     { id: 'tickets',      emoji: '🎫', label: 'Support Tickets', keywords: ['support', 'help', 'community', 'public', 'server', 'member'] },
     { id: 'reactionroles',emoji: '🎭', label: 'Reaction Roles',  keywords: ['role', 'member', 'community', 'social', 'club', 'public']    },
@@ -84,8 +76,7 @@ function getSmartSuggestions(description) {
     return ADDON_SUGGESTIONS.filter(s => s.keywords.some(k => lower.includes(k)));
 }
 
-function buildPreviewEmbed(structure, personality, smartSuggestions) {
-    const pers       = PERSONALITIES[personality] || PERSONALITIES.void;
+function buildPreviewEmbed(structure, keepRoles, smartSuggestions) {
     const roles      = (structure.roles || []).map(r => r.name).join(' · ') || 'None';
     const categories = (structure.categories || []).map(c => {
         const icon = c.staffOnly ? '🔒' : c.readOnly ? '📖' : '📁';
@@ -95,10 +86,9 @@ function buildPreviewEmbed(structure, personality, smartSuggestions) {
     const embed = new EmbedBuilder()
         .setTitle(`🌌 ${structure.serverName}`)
         .setDescription(`*${(structure.welcomeMessage || '').slice(0, 200)}${(structure.welcomeMessage?.length ?? 0) > 200 ? '…' : ''}*`)
-        .setColor(pers.color)
+        .setColor(0x6B48FF)
         .addFields(
-            { name: `${pers.emoji} Personality`, value: `**${pers.name}** — ${pers.desc}`, inline: false },
-            { name: `👥 Roles (${(structure.roles || []).length})`, value: roles, inline: false },
+            { name: '🎭 Roles', value: keepRoles ? '*(Keeping your existing roles)*' : `${roles}`, inline: false },
             { name: `📁 Categories (${(structure.categories || []).length})`, value: categories, inline: false },
         )
         .setFooter({ text: '⚡ Void Builder • Toggle add-ons below, then hit Build' })
@@ -122,23 +112,15 @@ function buildPreviewComponents(addons) {
         new ButtonBuilder().setCustomId('preview_regen').setLabel('Regenerate').setStyle(ButtonStyle.Primary).setEmoji('🔄')
     );
 
-    const keepRolesActive = addons.has('keeproles');
     const row2 = new ActionRowBuilder().addComponents(
-        [
-            ...ADDON_SUGGESTIONS.map(s => {
-                const active = addons.has(s.id);
-                return new ButtonBuilder()
-                    .setCustomId(`suggestion_toggle:${s.id}`)
-                    .setLabel(s.label)
-                    .setStyle(active ? ButtonStyle.Success : ButtonStyle.Secondary)
-                    .setEmoji(active ? '✅' : s.emoji);
-            }),
-            new ButtonBuilder()
-                .setCustomId('suggestion_toggle:keeproles')
-                .setLabel('Keep Roles')
-                .setStyle(keepRolesActive ? ButtonStyle.Success : ButtonStyle.Secondary)
-                .setEmoji(keepRolesActive ? '✅' : '🎭')
-        ]
+        ADDON_SUGGESTIONS.map(s => {
+            const active = addons.has(s.id);
+            return new ButtonBuilder()
+                .setCustomId(`suggestion_toggle:${s.id}`)
+                .setLabel(s.label)
+                .setStyle(active ? ButtonStyle.Success : ButtonStyle.Secondary)
+                .setEmoji(active ? '✅' : s.emoji);
+        })
     );
 
     return [row1, row2];
@@ -168,7 +150,7 @@ module.exports = {
                 .setColor(0x6B48FF)
                 .addFields(
                     { name: '✍️  Prompt Mode', value: 'Describe your server in your own words and let the AI generate a unique layout from scratch.', inline: false },
-                    { name: '🧙  Wizard Mode', value: 'Choose your server type, size, personality and add-ons using dropdowns and buttons — **zero typing required**.', inline: false }
+                    { name: '🧙  Wizard Mode', value: 'Choose your server type, size, and add-ons using dropdowns and buttons — **zero typing required**.', inline: false }
                 )
                 .setFooter({ text: '⚡ Void Builder • AI-Powered Discord Server Architect' });
 
@@ -205,41 +187,39 @@ module.exports = {
             return interaction.update({ embeds: step.embeds, content: '', components: step.components });
         }
 
-        // ── Step 2: Separator chosen → personality picker ─────────────────────
+        // ── Step 2: Separator chosen → Keep Roles? ────────────────────────────
         if (interaction.isStringSelectMenu() && interaction.customId === 'deploy_sep_select') {
             const sepKey = interaction.values[0];
 
-            const personalityMenu = new StringSelectMenuBuilder()
-                .setCustomId(`deploy_personality_select:${sepKey}`)
-                .setPlaceholder('Choose your server\'s personality…')
-                .addOptions(Object.entries(PERSONALITIES).map(([key, p]) => ({
-                    label: `${p.emoji}  ${p.name}`,
-                    description: p.desc,
-                    value: key
-                })));
+            const embed = new EmbedBuilder()
+                .setTitle('🎭 Keep Existing Roles?')
+                .setDescription('Do you want to **keep your current roles** or let the AI generate brand new ones?\n\n**Yes** — Only channels will be rebuilt. Your roles stay exactly as they are.\n**No** — Everything is wiped and rebuilt from scratch, including roles.')
+                .setColor(0x6B48FF)
+                .setFooter({ text: '⚡ Void Builder • Step 2 of 3' });
 
-            return interaction.update({
-                content: '### 🌌 Void Builder — Step 2 of 3\nChoose the **personality** that defines your server\'s vibe:',
-                components: [new ActionRowBuilder().addComponents(personalityMenu)]
-            });
+            const row = new ActionRowBuilder().addComponents(
+                new ButtonBuilder().setCustomId(`deploy_keeproles:${sepKey}:yes`).setLabel('Yes, keep my roles').setStyle(ButtonStyle.Success).setEmoji('✅'),
+                new ButtonBuilder().setCustomId(`deploy_keeproles:${sepKey}:no`).setLabel('No, rebuild everything').setStyle(ButtonStyle.Danger).setEmoji('🗑️')
+            );
+
+            return interaction.update({ embeds: [embed], content: '', components: [row] });
         }
 
-        // ── Step 3: Personality chosen → description modal ────────────────────
-        if (interaction.isStringSelectMenu() && interaction.customId.startsWith('deploy_personality_select:')) {
-            const parts       = interaction.customId.split(':');
-            const sepKey      = parts[1];
-            const personality = interaction.values[0];
-            const pers        = PERSONALITIES[personality] || PERSONALITIES.void;
+        // ── Step 3: Keep Roles answered → description modal ───────────────────
+        if (interaction.isButton() && interaction.customId.startsWith('deploy_keeproles:')) {
+            const parts    = interaction.customId.split(':');
+            const sepKey   = parts[1];
+            const keepRoles = parts[2]; // 'yes' or 'no'
 
             const modal = new ModalBuilder()
-                .setCustomId(`deploy_modal:${sepKey}:${personality}`)
-                .setTitle(`🌌 Void Builder — Step 3 of 3`);
+                .setCustomId(`deploy_modal:${sepKey}:${keepRoles}`)
+                .setTitle('🌌 Void Builder — Step 3 of 3');
 
             modal.addComponents(
                 new ActionRowBuilder().addComponents(
                     new TextInputBuilder()
                         .setCustomId('description')
-                        .setLabel(`Describe your ${pers.emoji} ${pers.name} server`)
+                        .setLabel('Describe your server')
                         .setPlaceholder('e.g. A Minecraft prison server with miner, guard and warden ranks…')
                         .setStyle(TextInputStyle.Paragraph)
                         .setMinLength(10)
@@ -260,29 +240,28 @@ module.exports = {
 
             const parts       = interaction.customId.split(':');
             const sepKey      = parts[1];
-            const personality = parts[2] || 'void';
-            const pers        = PERSONALITIES[personality] || PERSONALITIES.void;
+            const keepRoles   = parts[2] === 'yes';
             const separator   = getSeparator(sepKey);
             const description = interaction.fields.getTextInputValue('description');
 
             await interaction.reply({
-                content: `${makeProgressBar(0)}\n🌌 **Void Builder is thinking…** Crafting a **${pers.emoji} ${pers.name}** server from your description…`,
+                content: `${makeProgressBar(0)}\n🌌 **Void Builder is thinking…** Crafting your server from your description…`,
                 flags: [MessageFlags.Ephemeral]
             });
 
             try {
-                console.log(`\n📥 Deploy request: "${description}" [sep: "${separator}"] [personality: "${personality}"]`);
-                const structure        = await generateServerStructure(description, separator, personality);
+                console.log(`\n📥 Deploy request: "${description}" [sep: "${separator}"] [keepRoles: ${keepRoles}]`);
+                const structure        = await generateServerStructure(description, separator);
                 const smartSuggestions = getSmartSuggestions(description);
                 const addons           = new Set();
 
                 pendingBuilds.set(`${interaction.guild.id}-${interaction.user.id}`, {
-                    structure, separator, description, personality, addons, smartSuggestions
+                    structure, separator, description, keepRoles, addons, smartSuggestions
                 });
 
                 await interaction.editReply({
                     content: '### 🌌 Server Preview\nReview your generated structure below, then toggle add-ons and hit **Build**:',
-                    embeds:  [buildPreviewEmbed(structure, personality, smartSuggestions)],
+                    embeds:  [buildPreviewEmbed(structure, keepRoles, smartSuggestions)],
                     components: buildPreviewComponents(addons)
                 });
             } catch (error) {
@@ -308,7 +287,7 @@ module.exports = {
 
             await interaction.update({
                 content: '### 🌌 Server Preview\nReview your generated structure below, then toggle add-ons and hit **Build**:',
-                embeds: [buildPreviewEmbed(pending.structure, pending.personality, pending.smartSuggestions)],
+                embeds: [buildPreviewEmbed(pending.structure, pending.keepRoles, pending.smartSuggestions)],
                 components: buildPreviewComponents(pending.addons)
             });
             return;
@@ -347,7 +326,12 @@ module.exports = {
             };
 
             try {
-                const { roleMap, firstTextChannel } = await buildServer(interaction.guild, pending.structure, onProgress, { keepRoles: pending.addons.has('keeproles') });
+                const { roleMap, firstTextChannel } = await buildServer(
+                    interaction.guild,
+                    pending.structure,
+                    onProgress,
+                    { keepRoles: pending.keepRoles }
+                );
 
                 // ── Apply toggled add-ons ─────────────────────────────────────
                 const staffRoles = [...roleMap.values()].filter(r =>
@@ -367,7 +351,8 @@ module.exports = {
                     ? `\n🔧 Add-ons deployed: ${deployedAddons.join(', ')}`
                     : '';
 
-                const summary = `✅ **"${pending.structure.serverName}"** is live! ${(pending.structure.roles || []).length} roles · ${(pending.structure.categories || []).length} categories${addonSummary}`;
+                const roleNote = pending.keepRoles ? ' · roles kept' : ` · ${(pending.structure.roles || []).length} roles`;
+                const summary = `✅ **"${pending.structure.serverName}"** is live!${roleNote} · ${(pending.structure.categories || []).length} categories${addonSummary}`;
 
                 try { await interaction.followUp({ content: summary, flags: [MessageFlags.Ephemeral] }); }
                 catch { console.log('ℹ️ Could not send followUp — channel deleted during rebuild, this is normal.'); }
@@ -392,17 +377,17 @@ module.exports = {
             if (!pending) return interaction.update({ content: '❌ Preview expired. Please run `/deploy` again.', embeds: [], components: [] });
 
             await interaction.update({
-                content: `${makeProgressBar(0)}\n🌌 **Regenerating…** Crafting a new **${PERSONALITIES[pending.personality]?.emoji ?? '🌌'} ${PERSONALITIES[pending.personality]?.name ?? 'Void'}** structure…`,
+                content: `${makeProgressBar(0)}\n🌌 **Regenerating…** Crafting a new structure…`,
                 embeds: [],
                 components: []
             });
 
             try {
-                const structure = await generateServerStructure(pending.description, pending.separator, pending.personality);
+                const structure = await generateServerStructure(pending.description, pending.separator);
                 pendingBuilds.set(key, { ...pending, structure });
                 await interaction.editReply({
                     content: '### 🌌 Server Preview\nReview your generated structure below, then toggle add-ons and hit **Build**:',
-                    embeds: [buildPreviewEmbed(structure, pending.personality, pending.smartSuggestions)],
+                    embeds: [buildPreviewEmbed(structure, pending.keepRoles, pending.smartSuggestions)],
                     components: buildPreviewComponents(pending.addons)
                 });
             } catch (error) {

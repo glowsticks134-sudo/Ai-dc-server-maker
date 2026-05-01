@@ -94,6 +94,7 @@ const BUTTON_ROUTES = {
     wipe_cancel:           'wipe',
     deploy_mode_prompt:    'deploy',
     deploy_mode_wizard:    'deploy',
+    deploy_keeproles:      'deploy',
     preview_build:         'deploy',
     preview_cancel:        'deploy',
     preview_regen:         'deploy',
