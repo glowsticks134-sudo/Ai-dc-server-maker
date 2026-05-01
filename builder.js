@@ -20,15 +20,29 @@ async function cleanServer(guild) {
     console.log('✅ Cleanup done!');
 }
 
-async function buildServer(guild, structure, onProgress = null) {
+async function cleanChannels(guild) {
+    console.log('🧹 Cleaning channels only (keeping roles)...');
+    for (const [, channel] of guild.channels.cache) {
+        try { await channel.delete('Cleanup before deploy'); } catch { }
+    }
+    console.log('✅ Channel cleanup done!');
+}
+
+async function buildServer(guild, structure, onProgress = null, options = {}) {
+    const { keepRoles = false } = options;
+
     const progress = async (percent, message) => {
         if (onProgress) {
             try { await onProgress(percent, message); } catch { }
         }
     };
 
-    await progress(5, '🌌 Collapsing old dimensions…');
-    await cleanServer(guild);
+    await progress(5, keepRoles ? '🌌 Collapsing old channels (keeping roles)…' : '🌌 Collapsing old dimensions…');
+    if (keepRoles) {
+        await cleanChannels(guild);
+    } else {
+        await cleanServer(guild);
+    }
     await progress(12, '🔨 Initializing construction protocols…');
 
     console.log(`🔨 Building: ${structure.serverName}`);
@@ -44,22 +58,31 @@ async function buildServer(guild, structure, onProgress = null) {
         ]);
     } catch { }
 
-    const roleMap     = new Map();
-    const sortedRoles = [...(structure.roles || [])].sort((a, b) => (b.position || 0) - (a.position || 0));
-    const roleTotal   = sortedRoles.length || 1;
+    const roleMap = new Map();
 
-    for (let i = 0; i < sortedRoles.length; i++) {
-        const r = sortedRoles[i];
-        try {
-            const permissions = (r.permissions || []).map(p => PermissionsBitField.Flags[p]).filter(Boolean);
-            const role = await guild.roles.create({ name: r.name, color: r.color || '#99AAB5', permissions, hoist: true, reason: 'Void Builder' });
-            roleMap.set(r.name, role);
-            console.log(`✅ Role: ${r.name}`);
-        } catch (err) {
-            console.warn(`⚠️ Role "${r.name}": ${err.message}`);
+    if (keepRoles) {
+        // Use existing roles instead of creating new ones
+        for (const [, role] of guild.roles.cache) {
+            if (role.name !== '@everyone') roleMap.set(role.name, role);
         }
-        const pct = 12 + Math.round(((i + 1) / roleTotal) * 28);
-        await progress(pct, `⚙️ Forging role **${r.name}**… (${i + 1}/${roleTotal})`);
+        await progress(40, `🎭 Keeping ${roleMap.size} existing role(s)…`);
+    } else {
+        const sortedRoles = [...(structure.roles || [])].sort((a, b) => (b.position || 0) - (a.position || 0));
+        const roleTotal   = sortedRoles.length || 1;
+
+        for (let i = 0; i < sortedRoles.length; i++) {
+            const r = sortedRoles[i];
+            try {
+                const permissions = (r.permissions || []).map(p => PermissionsBitField.Flags[p]).filter(Boolean);
+                const role = await guild.roles.create({ name: r.name, color: r.color || '#99AAB5', permissions, hoist: true, reason: 'Void Builder' });
+                roleMap.set(r.name, role);
+                console.log(`✅ Role: ${r.name}`);
+            } catch (err) {
+                console.warn(`⚠️ Role "${r.name}": ${err.message}`);
+            }
+            const pct = 12 + Math.round(((i + 1) / roleTotal) * 28);
+            await progress(pct, `⚙️ Forging role **${r.name}**… (${i + 1}/${roleTotal})`);
+        }
     }
 
     const staffRoles = [...roleMap.values()].filter(r =>

@@ -122,15 +122,23 @@ function buildPreviewComponents(addons) {
         new ButtonBuilder().setCustomId('preview_regen').setLabel('Regenerate').setStyle(ButtonStyle.Primary).setEmoji('🔄')
     );
 
+    const keepRolesActive = addons.has('keeproles');
     const row2 = new ActionRowBuilder().addComponents(
-        ADDON_SUGGESTIONS.map(s => {
-            const active = addons.has(s.id);
-            return new ButtonBuilder()
-                .setCustomId(`suggestion_toggle:${s.id}`)
-                .setLabel(s.label)
-                .setStyle(active ? ButtonStyle.Success : ButtonStyle.Secondary)
-                .setEmoji(active ? '✅' : s.emoji);
-        })
+        [
+            ...ADDON_SUGGESTIONS.map(s => {
+                const active = addons.has(s.id);
+                return new ButtonBuilder()
+                    .setCustomId(`suggestion_toggle:${s.id}`)
+                    .setLabel(s.label)
+                    .setStyle(active ? ButtonStyle.Success : ButtonStyle.Secondary)
+                    .setEmoji(active ? '✅' : s.emoji);
+            }),
+            new ButtonBuilder()
+                .setCustomId('suggestion_toggle:keeproles')
+                .setLabel('Keep Roles')
+                .setStyle(keepRolesActive ? ButtonStyle.Success : ButtonStyle.Secondary)
+                .setEmoji(keepRolesActive ? '✅' : '🎭')
+        ]
     );
 
     return [row1, row2];
@@ -339,7 +347,7 @@ module.exports = {
             };
 
             try {
-                const { roleMap, firstTextChannel } = await buildServer(interaction.guild, pending.structure, onProgress);
+                const { roleMap, firstTextChannel } = await buildServer(interaction.guild, pending.structure, onProgress, { keepRoles: pending.addons.has('keeproles') });
 
                 // ── Apply toggled add-ons ─────────────────────────────────────
                 const staffRoles = [...roleMap.values()].filter(r =>
@@ -352,8 +360,11 @@ module.exports = {
                 if (pending.addons.has('moderation'))    await addModerationChannels(interaction.guild, staffRoles);
                 if (pending.addons.has('welcome'))       await addWelcomeEmbed(interaction.guild, pending.structure, firstTextChannel);
 
-                const addonSummary = pending.addons.size > 0
-                    ? `\n🔧 Add-ons deployed: ${[...pending.addons].map(id => ADDON_SUGGESTIONS.find(s => s.id === id)?.label).join(', ')}`
+                const deployedAddons = [...pending.addons]
+                    .map(id => ADDON_SUGGESTIONS.find(s => s.id === id)?.label)
+                    .filter(Boolean);
+                const addonSummary = deployedAddons.length > 0
+                    ? `\n🔧 Add-ons deployed: ${deployedAddons.join(', ')}`
                     : '';
 
                 const summary = `✅ **"${pending.structure.serverName}"** is live! ${(pending.structure.roles || []).length} roles · ${(pending.structure.categories || []).length} categories${addonSummary}`;
