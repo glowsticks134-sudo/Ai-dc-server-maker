@@ -13,10 +13,15 @@ const fs   = require('fs');
 const path = require('path');
 const { createServer } = require('./server');
 
-const { DISCORD_TOKEN, CLIENT_ID, GROQ_API_KEY } = process.env;
+const { DISCORD_TOKEN, CLIENT_ID, GROQ_API_KEY, OWNER_ID } = process.env;
 
 if (!DISCORD_TOKEN || !CLIENT_ID || !GROQ_API_KEY) {
     console.error('❌ Missing variables in .env. Check DISCORD_TOKEN, CLIENT_ID, GROQ_API_KEY.');
+    process.exit(1);
+}
+
+if (!OWNER_ID) {
+    console.error('❌ Missing OWNER_ID in .env. Set it to your Discord user ID to restrict access.');
     process.exit(1);
 }
 
@@ -119,6 +124,14 @@ client.on('guildCreate', async guild => {
 });
 
 client.on('interactionCreate', async interaction => {
+    // ── Private mode: only allow the bot owner ────────────────────────────────
+    if (interaction.user.id !== OWNER_ID) {
+        if (interaction.isRepliable()) {
+            await interaction.reply({ content: '🔒 This bot is private and not available for public use.', ephemeral: true });
+        }
+        return;
+    }
+
     let cmdName;
 
     if (interaction.isChatInputCommand()) {
