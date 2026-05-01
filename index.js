@@ -12,6 +12,7 @@ const { Client, GatewayIntentBits, REST, Routes, Collection } = require('discord
 const fs   = require('fs');
 const path = require('path');
 const { createServer } = require('./server');
+const { isGranted } = require('./data/allowedUsers');
 
 const { DISCORD_TOKEN, CLIENT_ID, GROQ_API_KEY, OWNER_ID } = process.env;
 
@@ -124,10 +125,18 @@ client.on('guildCreate', async guild => {
 });
 
 client.on('interactionCreate', async interaction => {
-    // ── Private mode: only allow the bot owner ────────────────────────────────
-    if (interaction.user.id !== OWNER_ID) {
+    // ── Private mode: only allow the owner or temporarily granted users ─────────
+    // Allow /access unlock through so users can enter a passphrase to gain access
+    const isAccessUnlock = interaction.isChatInputCommand()
+        && interaction.commandName === 'access'
+        && interaction.options.getSubcommand(false) === 'unlock';
+
+    const isOwner = interaction.user.id === OWNER_ID;
+    const hasAccess = isOwner || isGranted(interaction.user.id);
+
+    if (!hasAccess && !isAccessUnlock) {
         if (interaction.isRepliable()) {
-            await interaction.reply({ content: '🔒 This bot is private and not available for public use.', ephemeral: true });
+            await interaction.reply({ content: '🔒 This bot is private. Use `/access unlock` with the passphrase if you have one.', ephemeral: true });
         }
         return;
     }
