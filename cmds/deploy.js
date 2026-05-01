@@ -150,7 +150,7 @@ module.exports = {
 
         // ── Step 0: Slash command → mode picker ──────────────────────────────
         if (interaction.isChatInputCommand()) {
-            if (!isAuthorised(interaction.guild.id, interaction.user.id, interaction.guild.ownerId)) {
+            if (!isAuthorised(interaction.guild.id, interaction.user.id)) {
                 return interaction.reply({ content: '❌ Only the server owner or a co-owner can use this command.', flags: [MessageFlags.Ephemeral] });
             }
 
@@ -246,7 +246,7 @@ module.exports = {
 
         // ── Step 4: Modal submit → generate + preview ─────────────────────────
         if (interaction.isModalSubmit() && interaction.customId.startsWith('deploy_modal:')) {
-            if (!isAuthorised(interaction.guild.id, interaction.user.id, interaction.guild.ownerId)) {
+            if (!isAuthorised(interaction.guild.id, interaction.user.id)) {
                 return interaction.reply({ content: '❌ Only the server owner or a co-owner can use this command.', flags: [MessageFlags.Ephemeral] });
             }
 

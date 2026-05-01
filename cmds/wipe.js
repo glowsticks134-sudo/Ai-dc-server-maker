@@ -18,7 +18,7 @@ module.exports = {
 
     async execute(interaction) {
         if (interaction.isChatInputCommand()) {
-            if (!isAuthorised(interaction.guild.id, interaction.user.id, interaction.guild.ownerId)) {
+            if (!isAuthorised(interaction.guild.id, interaction.user.id)) {
                 return interaction.reply({ content: '❌ Only the server owner or a co-owner can use this command.', flags: [MessageFlags.Ephemeral] });
             }
 
@@ -49,7 +49,7 @@ module.exports = {
         }
 
         if (interaction.isButton() && interaction.customId === 'wipe_confirm') {
-            if (!isAuthorised(interaction.guild.id, interaction.user.id, interaction.guild.ownerId)) {
+            if (!isAuthorised(interaction.guild.id, interaction.user.id)) {
                 return interaction.update({ content: '❌ Only the server owner or a co-owner can do this.', components: [] });
             }
 

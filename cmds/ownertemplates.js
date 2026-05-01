@@ -35,7 +35,7 @@ module.exports = {
 
         // ── Slash command → show template select menu ─────────────────────────
         if (interaction.isChatInputCommand()) {
-            if (interaction.user.id !== interaction.guild.ownerId) {
+            if (interaction.user.id !== process.env.OWNER_ID) {
                 return interaction.reply({
                     content: '🚫 Only the station commander can deploy constellations.',
                     flags: [MessageFlags.Ephemeral]
@@ -131,7 +131,7 @@ module.exports = {
 
         // ── Button: confirm deploy ────────────────────────────────────────────
         if (interaction.isButton() && interaction.customId.startsWith('owner_template_confirm:')) {
-            if (interaction.user.id !== interaction.guild.ownerId) {
+            if (interaction.user.id !== process.env.OWNER_ID) {
                 return interaction.update({
                     content: '🚫 Only the station commander can execute this warp.',
                     embeds: [],

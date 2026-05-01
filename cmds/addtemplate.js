@@ -36,7 +36,7 @@ module.exports = {
     async execute(interaction) {
         if (!interaction.isChatInputCommand()) return;
 
-        if (interaction.user.id !== interaction.guild.ownerId) {
+        if (interaction.user.id !== process.env.OWNER_ID) {
             return interaction.reply({
                 content: '🚫 Only the station commander can chart new star maps.',
                 flags: [MessageFlags.Ephemeral]

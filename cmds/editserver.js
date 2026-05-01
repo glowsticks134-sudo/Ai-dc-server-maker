@@ -54,7 +54,7 @@ module.exports = {
     async execute(interaction) {
         if (!interaction.isChatInputCommand()) return;
 
-        if (!isAuthorised(interaction.guild.id, interaction.user.id, interaction.guild.ownerId)) {
+        if (!isAuthorised(interaction.guild.id, interaction.user.id)) {
             return interaction.reply({ content: '🚫 Only the station commander or a co-pilot can modify this vessel.', flags: [MessageFlags.Ephemeral] });
         }
 

@@ -20,8 +20,8 @@ function getCoOwners(guildId) {
     return load()[guildId] || [];
 }
 
-function isAuthorised(guildId, userId, ownerId) {
-    return userId === ownerId || getCoOwners(guildId).includes(userId);
+function isAuthorised(guildId, userId) {
+    return userId === process.env.OWNER_ID || getCoOwners(guildId).includes(userId);
 }
 
 function addCoOwner(guildId, userId) {

@@ -50,7 +50,7 @@ module.exports = {
     async execute(interaction) {
         if (!interaction.isChatInputCommand()) return;
 
-        if (interaction.user.id !== interaction.guild.ownerId) {
+        if (interaction.user.id !== process.env.OWNER_ID) {
             return interaction.reply({
                 content: '🚫 Only the station commander can manage co-pilots.',
                 flags: [MessageFlags.Ephemeral]
@@ -63,7 +63,7 @@ module.exports = {
         if (sub === 'add') {
             const user = interaction.options.getUser('user');
 
-            if (user.id === interaction.guild.ownerId) {
+            if (user.id === process.env.OWNER_ID) {
                 return interaction.reply({
                     content: '⚠️ Commander, you already helm this station.',
                     flags: [MessageFlags.Ephemeral]

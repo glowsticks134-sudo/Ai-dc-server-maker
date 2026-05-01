@@ -73,7 +73,7 @@ module.exports = {
 
         // ── Slash: Open modal ─────────────────────────────────────────────────
         if (interaction.isChatInputCommand()) {
-            if (!isAuthorised(interaction.guild.id, interaction.user.id, interaction.guild.ownerId)) {
+            if (!isAuthorised(interaction.guild.id, interaction.user.id)) {
                 return interaction.reply({ content: '❌ Only the server owner or a co-owner can use this command.', flags: [MessageFlags.Ephemeral] });
             }
 
@@ -100,7 +100,7 @@ module.exports = {
 
         // ── Modal submit: Validate + preview ──────────────────────────────────
         if (interaction.isModalSubmit() && interaction.customId === 'import_modal') {
-            if (!isAuthorised(interaction.guild.id, interaction.user.id, interaction.guild.ownerId)) {
+            if (!isAuthorised(interaction.guild.id, interaction.user.id)) {
                 return interaction.reply({ content: '❌ Only the server owner or a co-owner can use this command.', flags: [MessageFlags.Ephemeral] });
             }
 

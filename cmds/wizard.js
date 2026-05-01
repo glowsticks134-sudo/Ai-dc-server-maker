@@ -175,7 +175,7 @@ module.exports = {
 
         // ── Slash: Start wizard ───────────────────────────────────────────────
         if (interaction.isChatInputCommand()) {
-            if (!isAuthorised(interaction.guild.id, interaction.user.id, interaction.guild.ownerId)) {
+            if (!isAuthorised(interaction.guild.id, interaction.user.id)) {
                 return interaction.reply({ content: '❌ Only the server owner or a co-owner can use this command.', flags: [MessageFlags.Ephemeral] });
             }
 
