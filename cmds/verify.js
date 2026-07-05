@@ -57,7 +57,7 @@ async function handleSetup(interaction) {
         role = await guild.roles.create({
             name: VERIFIED_ROLE_NAME,
             color: VOID_COLOR,
-            reason: 'Void Builder – verification system setup'
+            reason: 'Stichachu Builder – verification system setup'
         });
     }
 
@@ -70,7 +70,7 @@ async function handleSetup(interaction) {
             'Click the button below — you\'ll be redirected to Discord to authorise, ' +
             'then brought straight back. No passwords, no forms.'
         )
-        .setFooter({ text: 'Void Builder · OAuth2 Verification' });
+        .setFooter({ text: 'Stichachu Builder · OAuth2 Verification' });
 
     const state = createState(interaction.user.id, guild.id);
     const baseUrl = `https://${process.env.REPLIT_DEV_DOMAIN}`;
@@ -105,7 +105,7 @@ async function handleMe(interaction) {
             'Click the button below to verify your account.\n' +
             'This link is personal and expires in **10 minutes**.'
         )
-        .setFooter({ text: 'Void Builder · OAuth2 Verification' });
+        .setFooter({ text: 'Stichachu Builder · OAuth2 Verification' });
 
     const row = new ActionRowBuilder().addComponents(
         new ButtonBuilder()

@@ -22,7 +22,7 @@ function page(title, body) {
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>${title} · Void Builder</title>
+<title>${title} · Stichachu Builder</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{min-height:100vh;display:flex;align-items:center;justify-content:center;
@@ -41,7 +41,7 @@ function page(title, body) {
 </style>
 </head>
 <body>
-<div class="card">${body}<footer>Void Builder · OAuth2 Verification</footer></div>
+<div class="card">${body}<footer>Stichachu Builder · OAuth2 Verification</footer></div>
 </body>
 </html>`;
 }
@@ -198,7 +198,7 @@ function createServer(client) {
                 role = await guild.roles.create({
                     name:   VERIFIED_ROLE_NAME,
                     color:  0x6B48FF,
-                    reason: 'Void Builder – auto-created for verification'
+                    reason: 'Stichachu Builder – auto-created for verification'
                 });
             }
 
@@ -206,7 +206,7 @@ function createServer(client) {
                 return res.send(alreadyPage);
             }
 
-            await member.roles.add(role, 'Void Builder – OAuth2 verified');
+            await member.roles.add(role, 'Stichachu Builder – OAuth2 verified');
             return res.send(successPage);
 
         } catch (err) {
@@ -215,11 +215,12 @@ function createServer(client) {
         }
     });
 
-    // Health check
+    // Health checks — Railway pings / and /verify/health
+    app.get('/', (_, res) => res.json({ ok: true, bot: 'Stichachu Builder' }));
     app.get('/verify/health', (_, res) => res.json({ ok: true }));
 
-    const PORT = 3000;
-    app.listen(PORT, () => {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, '0.0.0.0', () => {
         console.log(`🌐 Verification server running on port ${PORT}`);
     });
 

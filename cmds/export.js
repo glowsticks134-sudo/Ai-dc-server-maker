@@ -72,12 +72,12 @@ module.exports = {
         // ── Build structure ───────────────────────────────────────────────────
         const structure = {
             serverName:     guild.name,
-            welcomeMessage: `Welcome to ${guild.name}! Exported and rebuilt with Void Builder.`,
+            welcomeMessage: `Welcome to ${guild.name}! Exported and rebuilt with Stichachu Builder.`,
             roles,
             categories,
             _meta: {
                 exportedAt:   new Date().toISOString(),
-                exportedBy:   'Void Builder',
+                exportedBy:   'Stichachu Builder',
                 originalName: guild.name,
                 roleCount:    roles.length,
                 categoryCount: categories.length,
@@ -97,7 +97,7 @@ module.exports = {
             .setTitle('📤 Server Structure Exported')
             .setDescription(
                 `**${guild.name}** has been fully exported.\n\n` +
-                `Use \`/import\` on any server to rebuild this exact layout with Void Builder.`
+                `Use \`/import\` on any server to rebuild this exact layout with Stichachu Builder.`
             )
             .setColor(VOID_COLOR)
             .addFields(
@@ -119,7 +119,7 @@ module.exports = {
                 }
             )
             .setThumbnail(guild.iconURL())
-            .setFooter({ text: '⚡ Void Builder • Plugin System — Export & Import' })
+            .setFooter({ text: '⚡ Stichachu Builder • Plugin System — Export & Import' })
             .setTimestamp();
 
         await interaction.editReply({ embeds: [embed], files: [attachment] });

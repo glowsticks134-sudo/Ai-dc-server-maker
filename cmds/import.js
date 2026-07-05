@@ -1,6 +1,6 @@
 /**
  * cmds/import.js
- * /import — Paste a Void Builder JSON export to preview and rebuild the server
+ * /import — Paste a Stichachu Builder JSON export to preview and rebuild the server
  */
 
 const {
@@ -46,7 +46,7 @@ function buildImportPreview(structure) {
             { name: `👥 Roles (${(structure.roles || []).length})`, value: roles, inline: false },
             { name: `📁 Categories (${(structure.categories || []).length}) — ${totalChannels} channels`, value: categories, inline: false }
         )
-        .setFooter({ text: '⚡ Void Builder • Plugin System — Import' })
+        .setFooter({ text: '⚡ Stichachu Builder • Plugin System — Import' })
         .setTimestamp();
 
     if (structure._meta) {
@@ -66,7 +66,7 @@ function buildImportPreview(structure) {
 module.exports = {
     data: {
         name: 'import',
-        description: '📥 Import a server structure from a Void Builder JSON export'
+        description: '📥 Import a server structure from a Stichachu Builder JSON export'
     },
 
     async execute(interaction) {

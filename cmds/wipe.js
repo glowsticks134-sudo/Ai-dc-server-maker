@@ -26,7 +26,7 @@ module.exports = {
             const cancel  = new ButtonBuilder().setCustomId('wipe_cancel').setLabel('Cancel').setStyle(ButtonStyle.Secondary).setEmoji('✖️');
 
             const embed = new EmbedBuilder()
-                .setTitle('🌌 Void Wipe — Danger Zone')
+                .setTitle('🌌 Stichachu Wipe — Danger Zone')
                 .setDescription(
                     '**This action will permanently delete all channels and roles in this server.**\n\n' +
                     'There is no undo. The server will be left completely empty.\n\n' +
@@ -34,7 +34,7 @@ module.exports = {
                 )
                 .setColor(DANGER_COLOR)
                 .addFields({ name: '⚠️ What gets deleted', value: '• All text and voice channels\n• All categories\n• All custom roles', inline: false })
-                .setFooter({ text: '⚡ Void Builder • This cannot be reversed' })
+                .setFooter({ text: '⚡ Stichachu Builder • This cannot be reversed' })
                 .setTimestamp();
 
             return interaction.reply({
@@ -53,24 +53,24 @@ module.exports = {
                 return interaction.update({ content: '❌ Only the server owner or a co-owner can do this.', components: [] });
             }
 
-            await interaction.update({ content: '🌌 **Initiating Void Wipe…** Deleting all channels and roles…', components: [] });
+            await interaction.update({ content: '🌌 **Initiating Stichachu Wipe…** Deleting all channels and roles…', components: [] });
 
             const guild = interaction.guild;
             let deleted = 0;
 
             for (const [, channel] of guild.channels.cache) {
-                try { await channel.delete('Void Wipe'); deleted++; } catch { }
+                try { await channel.delete('Stichachu Wipe'); deleted++; } catch { }
             }
             for (const [, role] of guild.roles.cache) {
                 if (role.name === '@everyone' || role.managed) continue;
-                try { await role.delete('Void Wipe'); deleted++; } catch { }
+                try { await role.delete('Stichachu Wipe'); deleted++; } catch { }
             }
 
             try {
-                await interaction.followUp({ content: `✅ **Void Wipe complete.** Removed ${deleted} channels/roles.`, flags: [MessageFlags.Ephemeral] });
+                await interaction.followUp({ content: `✅ **Stichachu Wipe complete.** Removed ${deleted} channels/roles.`, flags: [MessageFlags.Ephemeral] });
             } catch { }
 
-            console.log(`🌌 Void Wipe completed in guild ${guild.id} — ${deleted} items removed`);
+            console.log(`🌌 Stichachu Wipe completed in guild ${guild.id} — ${deleted} items removed`);
         }
     }
 };

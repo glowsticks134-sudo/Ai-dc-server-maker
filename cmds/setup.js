@@ -83,7 +83,7 @@ module.exports = {
                 .setTitle('🎫 Support Ticket')
                 .setDescription(`Hello ${user}! Describe your issue and a staff member will assist you shortly.`)
                 .setColor(VOID_COLOR)
-                .setFooter({ text: '⚡ Void Builder • Click Close Ticket when resolved' })
+                .setFooter({ text: '⚡ Stichachu Builder • Click Close Ticket when resolved' })
                 .setTimestamp();
 
             await channel.send({ content: `${user}`, embeds: [embed], components: [new ActionRowBuilder().addComponents(closeBtn)] });
@@ -140,7 +140,7 @@ async function setupTickets(interaction) {
         .setTitle('🎫 Support Tickets')
         .setDescription('Need help? Click the button below to open a private support ticket.\nA staff member will assist you as soon as possible.')
         .setColor(VOID_COLOR)
-        .setFooter({ text: '⚡ Void Builder • Ticket System' })
+        .setFooter({ text: '⚡ Stichachu Builder • Ticket System' })
         .setTimestamp();
 
     await openChannel.send({ embeds: [embed], components: [new ActionRowBuilder().addComponents(openBtn)] });
@@ -183,7 +183,7 @@ async function setupReactionRoles(interaction) {
         .setTitle('🎭 Role Selection')
         .setDescription('Click a button below to add or remove a role.\nClick again to remove it.')
         .setColor(VOID_COLOR)
-        .setFooter({ text: '⚡ Void Builder • Reaction Roles' })
+        .setFooter({ text: '⚡ Stichachu Builder • Reaction Roles' })
         .setTimestamp();
 
     await rolesChannel.send({ embeds: [embed], components: rows });
@@ -232,7 +232,7 @@ async function setupWelcome(interaction) {
     const embed = new EmbedBuilder()
         .setTitle(`🌌 Welcome to ${guild.name}!`)
         .setDescription([
-            `We're thrilled to have you here. This server was crafted with **Void Builder** — AI-powered Discord server architecture.`,
+            `We're thrilled to have you here. This server was crafted with **Stichachu Builder** — AI-powered Discord server architecture.`,
             '',
             '**Getting Started**',
             '→ Read the rules',
@@ -243,7 +243,7 @@ async function setupWelcome(interaction) {
         ].join('\n'))
         .setColor(VOID_COLOR)
         .setThumbnail(guild.iconURL())
-        .setFooter({ text: '⚡ Void Builder • AI-Powered Discord Server Architect' })
+        .setFooter({ text: '⚡ Stichachu Builder • AI-Powered Discord Server Architect' })
         .setTimestamp();
 
     await channel.send({ embeds: [embed] });

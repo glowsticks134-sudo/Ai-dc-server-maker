@@ -91,7 +91,7 @@ module.exports = {
                     { name: `👥 Roles (${tpl.structure.roles.length})`, value: roleList, inline: true },
                     { name: `📁 Categories (${tpl.structure.categories.length})`, value: categoryList, inline: false }
                 )
-                .setFooter({ text: '⚡ Void Builder • Use /ownertemplates to deploy as server owner' })
+                .setFooter({ text: '⚡ Stichachu Builder • Use /ownertemplates to deploy as server owner' })
                 .setTimestamp();
 
             await interaction.update({ embeds: [embed], components: [] });

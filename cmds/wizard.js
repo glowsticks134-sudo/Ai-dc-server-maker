@@ -96,13 +96,13 @@ function stepEmbed(step, state) {
     ];
 
     return new EmbedBuilder()
-        .setTitle(`🧙 Void Wizard — ${stepLabels[step] || 'Building…'}`)
+        .setTitle(`🧙 Stichachu Wizard — ${stepLabels[step] || 'Building…'}`)
         .setDescription(stepDescriptions[step] || '')
         .setColor(color)
         .addFields(
             { name: `Step ${step} of 4`, value: choices.length > 0 ? choices.join('\n') : '*No selections yet*', inline: false }
         )
-        .setFooter({ text: '⚡ Void Builder • Zero typing required' })
+        .setFooter({ text: '⚡ Stichachu Builder • Zero typing required' })
         .setTimestamp();
 }
 
@@ -265,7 +265,7 @@ module.exports = {
             const description = `${type.desc}, ${size.modifier}`;
 
             await interaction.update({
-                content: `${makeProgressBar(0)}\n🧙 **Void Wizard is conjuring your ${pers.emoji} ${pers.name} ${type.emoji} ${type.label} server…**`,
+                content: `${makeProgressBar(0)}\n🧙 **Stichachu Wizard is conjuring your ${pers.emoji} ${pers.name} ${type.emoji} ${type.label} server…**`,
                 embeds: [],
                 components: []
             });

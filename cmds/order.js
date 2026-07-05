@@ -10,7 +10,7 @@ const VOID_COLOR = 0x6B48FF;
 module.exports = {
     data: {
         name: 'order',
-        description: '🛸 Transmit a commission — opens a private channel with the Void crew',
+        description: '🛸 Transmit a commission — opens a private channel with the Stichachu crew',
         options: [
             {
                 type: 3,
@@ -77,16 +77,16 @@ module.exports = {
                 .setDescription(`**Transmitted by:** ${user} (${user.tag})\n\n**Mission Details:**\n${details}`)
                 .setColor(VOID_COLOR)
                 .setThumbnail(user.displayAvatarURL())
-                .setFooter({ text: '⚡ Void Builder • Commission System' })
+                .setFooter({ text: '⚡ Stichachu Builder • Commission System' })
                 .setTimestamp();
 
             await channel.send({
-                content: `${user} — **Your transmission has been received!** The Void crew will respond shortly.\n\nCrew: ${staffRoles.map(r => `<@&${r.id}>`).join(' ') || '*No staff roles found*'}`,
+                content: `${user} — **Your transmission has been received!** The Stichachu crew will respond shortly.\n\nCrew: ${staffRoles.map(r => `<@&${r.id}>`).join(' ') || '*No staff roles found*'}`,
                 embeds: [embed]
             });
 
             await interaction.editReply({
-                content: `✅ **Transmission sent!** Head to ${channel} — the Void crew will respond there.`
+                content: `✅ **Transmission sent!** Head to ${channel} — the Stichachu crew will respond there.`
             });
 
             console.log(`🛸 Commission from ${user.tag} in guild ${guild.id}: "${details}"`);

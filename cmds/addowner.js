@@ -11,7 +11,7 @@ const VOID_COLOR = 0x6B48FF;
 module.exports = {
     data: {
         name: 'addowner',
-        description: '🌌 Grant or revoke co-pilot access to Void Builder commands',
+        description: '🌌 Grant or revoke co-pilot access to Stichachu Builder commands',
         options: [
             {
                 type: 1,
@@ -110,7 +110,7 @@ module.exports = {
                 .setTitle('🛸 Active Co-Pilots')
                 .setDescription(list.map(id => `• <@${id}>`).join('\n'))
                 .setColor(VOID_COLOR)
-                .setFooter({ text: '⚡ Void Builder • Co-pilots can use /deploy and related commands' })
+                .setFooter({ text: '⚡ Stichachu Builder • Co-pilots can use /deploy and related commands' })
                 .setTimestamp();
 
             return interaction.reply({ embeds: [embed], flags: [MessageFlags.Ephemeral] });

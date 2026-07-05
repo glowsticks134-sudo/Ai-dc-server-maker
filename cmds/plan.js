@@ -27,10 +27,10 @@ module.exports = {
         const planData    = PLANS[currentPlan];
 
         const embed = new EmbedBuilder()
-            .setTitle('🌌 Void Builder — Plan Overview')
+            .setTitle('🌌 Stichachu Builder — Plan Overview')
             .setDescription(`**This server\'s current plan: ${planData.name}**${boostNote}`)
             .setColor(VOID_COLOR)
-            .setFooter({ text: '⚡ Void Builder • Boost this server for Premium' })
+            .setFooter({ text: '⚡ Stichachu Builder • Boost this server for Premium' })
             .setTimestamp();
 
         for (const [key, p] of Object.entries(PLANS)) {

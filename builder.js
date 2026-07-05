@@ -74,7 +74,7 @@ async function buildServer(guild, structure, onProgress = null, options = {}) {
             const r = sortedRoles[i];
             try {
                 const permissions = (r.permissions || []).map(p => PermissionsBitField.Flags[p]).filter(Boolean);
-                const role = await guild.roles.create({ name: r.name, color: r.color || '#99AAB5', permissions, hoist: true, reason: 'Void Builder' });
+                const role = await guild.roles.create({ name: r.name, color: r.color || '#99AAB5', permissions, hoist: true, reason: 'Stichachu Builder' });
                 roleMap.set(r.name, role);
                 console.log(`✅ Role: ${r.name}`);
             } catch (err) {
@@ -112,7 +112,7 @@ async function buildServer(guild, structure, onProgress = null, options = {}) {
                 catOverwrites.push({ id: guild.roles.everyone.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.ReadMessageHistory] });
             }
 
-            const category = await guild.channels.create({ name: cat.name, type: ChannelType.GuildCategory, permissionOverwrites: catOverwrites, reason: 'Void Builder' });
+            const category = await guild.channels.create({ name: cat.name, type: ChannelType.GuildCategory, permissionOverwrites: catOverwrites, reason: 'Stichachu Builder' });
             console.log(`📁 Category: ${cat.name} ${isStaffOnly ? '[staff only]' : isCatReadOnly ? '[read only]' : '[public]'}`);
 
             for (const ch of cat.channels) {
@@ -140,7 +140,7 @@ async function buildServer(guild, structure, onProgress = null, options = {}) {
                         type: isVoice ? ChannelType.GuildVoice : ChannelType.GuildText,
                         parent: category.id,
                         permissionOverwrites: isStaffOnly ? undefined : channelOverwrites,
-                        reason: 'Void Builder'
+                        reason: 'Stichachu Builder'
                     });
 
                     console.log(`  ${isVoice ? '🔊' : isReadOnly ? '📖' : '💬'} ${ch.name}`);
@@ -165,7 +165,7 @@ async function buildServer(guild, structure, onProgress = null, options = {}) {
                 .setTitle(`🌌 Welcome to ${structure.serverName}`)
                 .setDescription(structure.welcomeMessage)
                 .setColor(VOID_COLOR)
-                .setFooter({ text: '⚡ Void Builder • AI-Powered Discord Server Architect' })
+                .setFooter({ text: '⚡ Stichachu Builder • AI-Powered Discord Server Architect' })
                 .setTimestamp();
             await firstTextChannel.send({ embeds: [embed] });
         } catch { }
@@ -187,7 +187,7 @@ async function addTicketSystem(guild, staffRoles) {
         const category   = await guild.channels.create({ name: '🎫 SUPPORT', type: ChannelType.GuildCategory, permissionOverwrites: catOverwrites });
         const openChannel = await guild.channels.create({ name: '📩-open-a-ticket', type: ChannelType.GuildText, parent: category.id, permissionOverwrites: catOverwrites });
         const openBtn     = new ButtonBuilder().setCustomId('ticket_open').setLabel('Open a Ticket').setStyle(ButtonStyle.Primary).setEmoji('🎫');
-        const embed       = new EB().setTitle('🎫 Support Tickets').setDescription('Need help? Click the button below to open a private support ticket.\nA staff member will assist you as soon as possible.').setColor(VOID_COLOR).setFooter({ text: '⚡ Void Builder • Ticket System' }).setTimestamp();
+        const embed       = new EB().setTitle('🎫 Support Tickets').setDescription('Need help? Click the button below to open a private support ticket.\nA staff member will assist you as soon as possible.').setColor(VOID_COLOR).setFooter({ text: '⚡ Stichachu Builder • Ticket System' }).setTimestamp();
         await openChannel.send({ embeds: [embed], components: [new ActionRowBuilder().addComponents(openBtn)] });
         console.log('🎫 Ticket system addon deployed');
     } catch (err) {
@@ -219,7 +219,7 @@ async function addReactionRoles(guild, roleMap) {
             ));
         }
 
-        const embed = new EB().setTitle('🎭 Role Selection').setDescription('Click a button below to add or remove a role.\nClick again to remove it.').setColor(VOID_COLOR).setFooter({ text: '⚡ Void Builder • Reaction Roles' }).setTimestamp();
+        const embed = new EB().setTitle('🎭 Role Selection').setDescription('Click a button below to add or remove a role.\nClick again to remove it.').setColor(VOID_COLOR).setFooter({ text: '⚡ Stichachu Builder • Reaction Roles' }).setTimestamp();
         await rolesChannel.send({ embeds: [embed], components: rows });
         console.log('🎭 Reaction roles addon deployed');
     } catch (err) {
@@ -252,7 +252,7 @@ async function addWelcomeEmbed(guild, structure, firstTextChannel) {
         const embed = new EB()
             .setTitle(`🌌 Welcome to ${structure.serverName}!`)
             .setDescription([
-                `We're thrilled to have you here. This server was crafted with **Void Builder** — AI-powered Discord server architecture.`,
+                `We're thrilled to have you here. This server was crafted with **Stichachu Builder** — AI-powered Discord server architecture.`,
                 '',
                 '**Getting Started**',
                 '→ Read the rules',
@@ -263,7 +263,7 @@ async function addWelcomeEmbed(guild, structure, firstTextChannel) {
             ].join('\n'))
             .setColor(VOID_COLOR)
             .setThumbnail(guild.iconURL())
-            .setFooter({ text: '⚡ Void Builder • AI-Powered Discord Server Architect' })
+            .setFooter({ text: '⚡ Stichachu Builder • AI-Powered Discord Server Architect' })
             .setTimestamp();
         await firstTextChannel.send({ embeds: [embed] });
         console.log('🌌 Welcome embed addon deployed');

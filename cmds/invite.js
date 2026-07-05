@@ -15,7 +15,7 @@ const VOID_COLOR = 0x6B48FF;
 module.exports = {
     data: {
         name: 'invite',
-        description: '🛸 Beam Void Builder into your own server — get the invite link'
+        description: '🛸 Beam Stichachu Builder into your own server — get the invite link'
     },
 
     async execute(interaction) {
@@ -25,9 +25,9 @@ module.exports = {
         const inviteUrl = `https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=8&scope=bot+applications.commands`;
 
         const embed = new EmbedBuilder()
-            .setTitle('🌌 Add Void Builder to Your Server')
+            .setTitle('🌌 Add Stichachu Builder to Your Server')
             .setDescription(
-                '**Void Builder** is an AI-powered Discord server architect that generates complete server structures ' +
+                '**Stichachu Builder** is an AI-powered Discord server architect that generates complete server structures ' +
                 '— roles, categories, channels, and permissions — from a single description or a guided wizard.\n\n' +
                 'Click **Beam Me In** below to authorize the bot and invite it to your Discord server.'
             )
@@ -60,7 +60,7 @@ module.exports = {
                 }
             )
             .setThumbnail(interaction.client.user.displayAvatarURL())
-            .setFooter({ text: '⚡ Void Builder • AI-Powered Discord Server Architect' })
+            .setFooter({ text: '⚡ Stichachu Builder • AI-Powered Discord Server Architect' })
             .setTimestamp();
 
         const addButton = new ButtonBuilder()

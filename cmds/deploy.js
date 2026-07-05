@@ -56,7 +56,7 @@ const RARE_UPGRADES = [
     '⚡ **EPIC DROP:** Dimensional Voice Cluster!',
     '💎 **LEGENDARY:** Cosmic Permission Matrix!',
     '🌟 **MYTHIC UNLOCK:** Quantum Role Architecture!',
-    '🔥 **ULTRA RARE:** Void-Forged Channel Network!',
+    '🔥 **ULTRA RARE:** Stichachu-Forged Channel Network!',
 ];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -91,7 +91,7 @@ function buildPreviewEmbed(structure, keepRoles, smartSuggestions) {
             { name: '🎭 Roles', value: keepRoles ? '*(Keeping your existing roles)*' : `${roles}`, inline: false },
             { name: `📁 Categories (${(structure.categories || []).length})`, value: categories, inline: false },
         )
-        .setFooter({ text: '⚡ Void Builder • Toggle add-ons below, then hit Build' })
+        .setFooter({ text: '⚡ Stichachu Builder • Toggle add-ons below, then hit Build' })
         .setTimestamp();
 
     if (smartSuggestions && smartSuggestions.length > 0) {
@@ -133,7 +133,7 @@ const pendingBuilds = new Map();
 module.exports = {
     data: {
         name: 'deploy',
-        description: '🚀 Architect and launch a complete Discord server using the Void AI'
+        description: '🚀 Architect and launch a complete Discord server using the Stichachu AI'
     },
 
     async execute(interaction) {
@@ -145,14 +145,14 @@ module.exports = {
             }
 
             const modeEmbed = new EmbedBuilder()
-                .setTitle('🌌 Void Builder — Choose Your Mode')
+                .setTitle('🌌 Stichachu Builder — Choose Your Mode')
                 .setDescription('How would you like to build your server?')
                 .setColor(0x6B48FF)
                 .addFields(
                     { name: '✍️  Prompt Mode', value: 'Describe your server in your own words and let the AI generate a unique layout from scratch.', inline: false },
                     { name: '🧙  Wizard Mode', value: 'Choose your server type, size, and add-ons using dropdowns and buttons — **zero typing required**.', inline: false }
                 )
-                .setFooter({ text: '⚡ Void Builder • AI-Powered Discord Server Architect' });
+                .setFooter({ text: '⚡ Stichachu Builder • AI-Powered Discord Server Architect' });
 
             const modeRow = new ActionRowBuilder().addComponents(
                 new ButtonBuilder().setCustomId('deploy_mode_prompt').setLabel('Prompt Mode').setStyle(ButtonStyle.Primary).setEmoji('✍️'),
@@ -175,7 +175,7 @@ module.exports = {
 
             return interaction.update({
                 embeds: [],
-                content: '### 🌌 Void Builder — Step 1 of 3\nChoose how channel names will look:',
+                content: '### 🌌 Stichachu Builder — Step 1 of 3\nChoose how channel names will look:',
                 components: [new ActionRowBuilder().addComponents(selectMenu)]
             });
         }
@@ -195,7 +195,7 @@ module.exports = {
                 .setTitle('🎭 Keep Existing Roles?')
                 .setDescription('Do you want to **keep your current roles** or let the AI generate brand new ones?\n\n**Yes** — Only channels will be rebuilt. Your roles stay exactly as they are.\n**No** — Everything is wiped and rebuilt from scratch, including roles.')
                 .setColor(0x6B48FF)
-                .setFooter({ text: '⚡ Void Builder • Step 2 of 3' });
+                .setFooter({ text: '⚡ Stichachu Builder • Step 2 of 3' });
 
             const row = new ActionRowBuilder().addComponents(
                 new ButtonBuilder().setCustomId(`deploy_keeproles:${sepKey}:yes`).setLabel('Yes, keep my roles').setStyle(ButtonStyle.Success).setEmoji('✅'),
@@ -213,7 +213,7 @@ module.exports = {
 
             const modal = new ModalBuilder()
                 .setCustomId(`deploy_modal:${sepKey}:${keepRoles}`)
-                .setTitle('🌌 Void Builder — Step 3 of 3');
+                .setTitle('🌌 Stichachu Builder — Step 3 of 3');
 
             modal.addComponents(
                 new ActionRowBuilder().addComponents(
@@ -245,7 +245,7 @@ module.exports = {
             const description = interaction.fields.getTextInputValue('description');
 
             await interaction.reply({
-                content: `${makeProgressBar(0)}\n🌌 **Void Builder is thinking…** Crafting your server from your description…`,
+                content: `${makeProgressBar(0)}\n🌌 **Stichachu Builder is thinking…** Crafting your server from your description…`,
                 flags: [MessageFlags.Ephemeral]
             });
 
@@ -307,7 +307,7 @@ module.exports = {
             const rareThreshold  = 40 + Math.floor(Math.random() * 30);
 
             await interaction.update({
-                content: `${makeProgressBar(0)}\n🚀 **Initializing Void Construction…** Preparing to rebuild **${pending.structure.serverName}**`,
+                content: `${makeProgressBar(0)}\n🚀 **Initializing Stichachu Construction…** Preparing to rebuild **${pending.structure.serverName}**`,
                 embeds: [],
                 components: []
             });

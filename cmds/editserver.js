@@ -110,7 +110,7 @@ module.exports = {
             const role = await guild.roles.create({
                 name,
                 color,
-                reason: 'editserver — forged by Void Builder'
+                reason: 'editserver — forged by Stichachu Builder'
             }).catch(err => { throw new Error(err.message); });
 
             return interaction.editReply({ content: `⭐ Role **${role.name}** has been **forged in the cosmos**.` });
@@ -123,7 +123,7 @@ module.exports = {
 
             if (!role) return interaction.reply({ content: `☄️ No role named **${name}** found in this dimension (or it's a managed role).`, flags: [MessageFlags.Ephemeral] });
 
-            await role.delete('editserver — disintegrated by Void Builder');
+            await role.delete('editserver — disintegrated by Stichachu Builder');
             return interaction.reply({ content: `☄️ Role **${name}** has been **disintegrated from existence**.`, flags: [MessageFlags.Ephemeral] });
         }
     }

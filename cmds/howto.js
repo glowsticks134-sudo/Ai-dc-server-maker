@@ -1,6 +1,6 @@
 /**
  * cmds/howto.js
- * /howto → Paginated guide to all Void Builder commands (public)
+ * /howto → Paginated guide to all Stichachu Builder commands (public)
  */
 
 const {
@@ -17,13 +17,13 @@ function buildPage(page, thumbnailUrl) {
     const base = new EmbedBuilder()
         .setColor(VOID_COLOR)
         .setThumbnail(thumbnailUrl)
-        .setFooter({ text: `⚡ Void Builder • AI-Powered Discord Server Architect  |  Page ${page} of ${TOTAL_PAGES}` });
+        .setFooter({ text: `⚡ Stichachu Builder • AI-Powered Discord Server Architect  |  Page ${page} of ${TOTAL_PAGES}` });
 
     if (page === 1) {
         return base
-            .setTitle('🌌 Void Builder — How To Use  (1/4)')
+            .setTitle('🌌 Stichachu Builder — How To Use  (1/4)')
             .setDescription(
-                'Welcome aboard. **Void Builder** is an AI-powered Discord server architect — it builds complete ' +
+                'Welcome aboard. **Stichachu Builder** is an AI-powered Discord server architect — it builds complete ' +
                 'server structures (roles, categories, channels, permissions) for you in seconds.\n\n' +
                 'Use the **Next** button below to explore all commands.'
             )
@@ -47,7 +47,7 @@ function buildPage(page, thumbnailUrl) {
 
     if (page === 2) {
         return base
-            .setTitle('🌌 Void Builder — How To Use  (2/4)')
+            .setTitle('🌌 Stichachu Builder — How To Use  (2/4)')
             .setDescription('**Templates, Snapshots & Restoration**')
             .addFields(
                 {
@@ -80,7 +80,7 @@ function buildPage(page, thumbnailUrl) {
 
     if (page === 3) {
         return base
-            .setTitle('🌌 Void Builder — How To Use  (3/4)')
+            .setTitle('🌌 Stichachu Builder — How To Use  (3/4)')
             .setDescription('**Server Management & Setup**')
             .addFields(
                 {
@@ -115,7 +115,7 @@ function buildPage(page, thumbnailUrl) {
 
     if (page === 4) {
         return base
-            .setTitle('🌌 Void Builder — How To Use  (4/4)')
+            .setTitle('🌌 Stichachu Builder — How To Use  (4/4)')
             .setDescription('**Utility & Account Commands**')
             .addFields(
                 {
@@ -134,7 +134,7 @@ function buildPage(page, thumbnailUrl) {
                     inline: false
                 },
                 {
-                    name: '🛸  /order — Commission the Void Crew',
+                    name: '🛸  /order — Commission the Stichachu Crew',
                     value: 'Open a private commission channel between you and the server staff. Describe what you need (custom bot, server architecture, etc.) and the team will respond.',
                     inline: false
                 },
@@ -144,8 +144,8 @@ function buildPage(page, thumbnailUrl) {
                     inline: false
                 },
                 {
-                    name: '🔗  /invite — Invite Void Builder',
-                    value: 'Get the link to add Void Builder to any server you own.',
+                    name: '🔗  /invite — Invite Stichachu Builder',
+                    value: 'Get the link to add Stichachu Builder to any server you own.',
                     inline: false
                 }
             );
@@ -172,7 +172,7 @@ function buildRow(page) {
 module.exports = {
     data: {
         name: 'howto',
-        description: '📖 Learn how to use every Void Builder command — interactive guide'
+        description: '📖 Learn how to use every Stichachu Builder command — interactive guide'
     },
 
     async execute(interaction) {
